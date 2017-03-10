@@ -1,0 +1,25 @@
+<html>
+<head>
+    <!-- This tells the browser how to read the document. -->
+    <meta charset="UTF-8">
+
+    <!-- Tells the browser what the title of this page should be. -->
+    <title>Map Meister</title>
+
+    <!-- Load the page styles. -->
+    <link href="css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAls4JgNQnqETfOTiqZbN5vH5cG32bAS4o&v=3&callback=initMap">
+    </script>
+
+    <script src="js/lib/knockout-3.2.0.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
