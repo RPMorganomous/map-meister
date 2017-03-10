@@ -8,7 +8,14 @@ function initMap() {
         center: {lat: 32.010394, lng: -102.107687},
         zoom: 13
     });
+    var faskin = {lat: 32.012297, lng: -102.106606};
+    var marker = new google.maps.Marker({
+        position: faskin,
+        map: map,
+        title: 'First Marker!'
+    });
 }
+
 
 // VIEWMODEL
 
