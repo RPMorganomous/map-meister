@@ -14,15 +14,16 @@ function initMap() {
         map: map,
         title: 'First Marker!'
     });
+
+    var infowindow = new google.maps.InfoWindow({
+        content: 'Yankee Doodle went to town...'
+    });
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
 }
 
 
-// VIEWMODEL
 
-//var ViewModel = function (){}
+// ko.applyBindings(new AppViewModel());
 
-// VIEW
-
-// ko.applyBindings(new ViewModel());
-
-//initMap(){};
