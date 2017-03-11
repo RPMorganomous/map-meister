@@ -14,7 +14,7 @@ function initMap() {
 
     var locations = [
         {title: 'Ricks House', location: {lat: 32.010855, lng: -102.107781}},
-        {title: 'Faskin Park', location: {lat: 32.012297, lng: -102.106606}},
+        {title: 'Fasken Park', location: {lat: 32.012297, lng: -102.106606}},
         {title: 'Connies House', location: {lat: 32.01101, lng: -102.107148}},
         {title: 'Lauras House', location: {lat: 32.010905, lng: -102.107486}},
         {title: 'Kims House', location: {lat: 32.010773, lng: -102.108157}},
@@ -47,6 +47,10 @@ function initMap() {
         bounds.extend(markers[i].position);
         map.fitBounds(bounds);
     }
+
+        document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
+        document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
+
 }
       // This function populates the infowindow when the marker is clicked. We'll only allow
       // one infowindow which will open at the marker that is clicked, and populate based
