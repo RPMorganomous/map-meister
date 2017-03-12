@@ -33,7 +33,23 @@ var locations = [
         }
       }
 
+      // This function will loop through the markers array and display them all.
+      function showRicksHood() {
+        var bounds = new google.maps.LatLngBounds();
+        // Extend the boundaries of the map for each marker and display the marker
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+          bounds.extend(markers[i].position);
+        }
+        map.fitBounds(bounds);
+      }
 
+      // This function will loop through the listings and hide them all.
+      function hideRicksHood() {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }
+      }
 
 var AppViewModel = function(){
     var self = this;
@@ -60,7 +76,7 @@ AppViewModel.prototype.initMap = function(){
         var title = locations[i].title;
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
-            map: map,
+            // map: map,
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
@@ -77,11 +93,11 @@ AppViewModel.prototype.initMap = function(){
         });
         // Extend the boundaries of the map for each marker
         bounds.extend(markers[i].position);
-        map.fitBounds(bounds);
+        // map.fitBounds(bounds);
     }
 
-        // document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
-        // document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
+        document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
+        document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
 
 }
 
