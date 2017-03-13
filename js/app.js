@@ -96,8 +96,8 @@ AppViewModel.prototype.initMap = function(){
         // map.fitBounds(bounds);
     }
 
-        document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
-        document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
+    document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
+    document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
 
 }
 
