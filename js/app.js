@@ -36,6 +36,11 @@ var locations = [
             infowindow.setMarker = null;
           });
         }
+        if (marker.getAnimation() !== null) {
+            marker.setAnimation(null);
+            } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
       }
 
       // This function will loop through the markers array and display them all.
@@ -206,8 +211,8 @@ AppViewModel.prototype.initMap = function(){
         // map.fitBounds(bounds);
     }
 
-    document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
-    document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
+    // document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
+    // document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
 
 }
 

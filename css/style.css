@@ -45,3 +45,13 @@
         text-align: left;
         width: 340px;
       }
+
+      button {
+        margin: 0 auto;
+      }
+
+      .Center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
