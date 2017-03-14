@@ -5,19 +5,27 @@ var map;
 // blank array for all the markers
 var markers = [];
 
-var locations = [
-        {title: 'Ricks House', location: {lat: 32.010855, lng: -102.107781},
-        content: 'Rick is a cool guy.'},
-        {title: 'Fasken Park', location: {lat: 32.012297, lng: -102.106606},
-        content: 'Faskin Park is a nice place for a picknick.'},
-        {title: 'Connies House', location: {lat: 32.01101, lng: -102.107148},
-        content: 'Connie is our neighbor.'},
-        {title: 'Lauras House', location: {lat: 32.010905, lng: -102.107486},
-        content: 'Laura is our hairstylist.'},
-        {title: 'Kims House', location: {lat: 32.010773, lng: -102.108157},
-        content: 'Kims son, Sean, is my sons friend.'},
-    ];
+// var locations = [
+//         {title: 'Ricks House', location: {lat: 32.010855, lng: -102.107781},
+//         content: 'Rick is a cool guy.'},
+//         {title: 'Fasken Park', location: {lat: 32.012297, lng: -102.106606},
+//         content: 'Faskin Park is a nice place for a picknick.'},
+//         {title: 'Connies House', location: {lat: 32.01101, lng: -102.107148},
+//         content: 'Connie is our neighbor.'},
+//         {title: 'Lauras House', location: {lat: 32.010905, lng: -102.107486},
+//         content: 'Laura is our hairstylist.'},
+//         {title: 'Kims House', location: {lat: 32.010773, lng: -102.108157},
+//         content: 'Kims son, Sean, is my sons friend.'},
+//     ];
 
+        var locations = [
+          {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+          {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+          {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
+          {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
+          {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
+          {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
+        ];
 
 
 // VIEWMODEL
@@ -25,54 +33,101 @@ var locations = [
       // This function populates the infowindow when the marker is clicked. We'll only allow
       // one infowindow which will open at the marker that is clicked, and populate based
       // on that markers position.
-      function populateInfoWindow(marker, infowindow) {
-        // Check to make sure the infowindow is not already opened on this marker.
-        if (infowindow.marker != marker) {
-          infowindow.marker = marker;
-          infowindow.setContent('<div>' + marker.position + '<p>' + marker.content + '</div>');
-          infowindow.open(map, marker);
-          // Make sure the marker property is cleared if the infowindow is closed.
-          infowindow.addListener('closeclick',function(){
-            infowindow.setMarker = null;
-          });
-        }
-        if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
+
+      // function populateInfoWindow(marker, infowindow) {
+      //   // Check to make sure the infowindow is not already opened on this marker.
+      //   if (infowindow.marker != marker) {
+      //     infowindow.marker = marker;
+      //     infowindow.setContent('<div>' + marker.position + '<p>' + marker.content + '</div>');
+      //     infowindow.open(map, marker);
+      //     // Make sure the marker property is cleared if the infowindow is closed.
+      //     infowindow.addListener('closeclick',function(){
+      //       infowindow.setMarker = null;
+      //     });
+      //   }
+      //   if (marker.getAnimation() !== null) {
+      //       marker.setAnimation(null);
+      //       } else {
+      //       marker.setAnimation(google.maps.Animation.BOUNCE);
+      //   }
+      // }
+
+      // This function populates the infowindow when the marker is clicked. We'll only allow
+      // one infowindow which will open at the marker that is clicked, and populate based
+      // on that markers position.
+function populateInfoWindow(marker, infowindow) {
+    // Check to make sure the infowindow is not already opened on this marker.
+    if (infowindow.marker != marker) {
+        // Clear the infowindow content to give the streetview time to load.
+        infowindow.setContent('');
+        infowindow.marker = marker;
+        // Make sure the marker property is cleared if the infowindow is closed.
+        infowindow.addListener('closeclick', function() {
+            infowindow.marker = null;
+        });
+        var streetViewService = new google.maps.StreetViewService();
+        var radius = 50;
+        // In case the status is OK, which means the pano was found, compute the
+        // position of the streetview image, then calculate the heading, then get a
+        // panorama from that and set the options
+        function getStreetView(data, status) {
+            if (status == google.maps.StreetViewStatus.OK) {
+                var nearStreetViewLocation = data.location.latLng;
+                var heading = google.maps.geometry.spherical.computeHeading(
+                    nearStreetViewLocation, marker.position);
+                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                var panoramaOptions = {
+                    position: nearStreetViewLocation,
+                    pov: {
+                        heading: heading,
+                        pitch: 30
+                        }
+                };
+                var panorama = new google.maps.StreetViewPanorama(
+                    document.getElementById('pano'), panoramaOptions);
             } else {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
+                infowindow.setContent('<div>' + marker.title + '</div>' +
+                    '<div>No Street View Found</div>');
+            }
         }
-      }
+       // Use streetview service to get the closest streetview image within
+       // 50 meters of the markers position
+       streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+       // Open the infowindow on the correct marker.
+       infowindow.open(map, marker);
+    }
+}
 
-      // This function will loop through the markers array and display them all.
-      function showRicksHood() {
-        var bounds = new google.maps.LatLngBounds();
-        // Extend the boundaries of the map for each marker and display the marker
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(map);
-          bounds.extend(markers[i].position);
-        }
-        map.fitBounds(bounds);
-      }
+   // This function will loop through the markers array and display them all.
+   function showRicksHood() {
+     var bounds = new google.maps.LatLngBounds();
+     // Extend the boundaries of the map for each marker and display the marker
+     for (var i = 0; i < markers.length; i++) {
+       markers[i].setMap(map);
+       bounds.extend(markers[i].position);
+     }
+     map.fitBounds(bounds);
+   }
 
-      // This function will loop through the listings and hide them all.
-      function hideRicksHood() {
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(null);
-        }
-      }
+   // This function will loop through the listings and hide them all.
+   function hideRicksHood() {
+     for (var i = 0; i < markers.length; i++) {
+       markers[i].setMap(null);
+     }
+   }
 
-      // This function takes in a COLOR, and then creates a new marker
-      // icon of that color. The icon will be 21 px wide by 34 high, have an origin
-      // of 0, 0 and be anchored at 10, 34).
-      function makeMarkerIcon(markerColor) {
-        var markerImage = new google.maps.MarkerImage(
-            'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor + '|40|_|%E2%80%A2',
-          new google.maps.Size(21, 34),
-          new google.maps.Point(0, 0),
-          new google.maps.Point(10, 34),
-          new google.maps.Size(21,34));
-        return markerImage;
-      }
+   // This function takes in a COLOR, and then creates a new marker
+   // icon of that color. The icon will be 21 px wide by 34 high, have an origin
+   // of 0, 0 and be anchored at 10, 34).
+   function makeMarkerIcon(markerColor) {
+     var markerImage = new google.maps.MarkerImage(
+         'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor + '|40|_|%E2%80%A2',
+       new google.maps.Size(21, 34),
+       new google.maps.Point(0, 0),
+       new google.maps.Point(10, 34),
+       new google.maps.Size(21,34));
+     return markerImage;
+   }
 
 var AppViewModel = function(){
     var self = this;
@@ -153,144 +208,144 @@ AppViewModel.prototype.initMap = function(){
         {name: 'Desert Map'});
 
         var styledMapTypeMidnight = new google.maps.StyledMapType(
-[
-    {
-        "featureType": "all",
-        "elementType": "labels.text.fill",
-        "stylers": [
+        [
             {
-                "color": "#ffffff"
-            }
-        ]
-    },
-    {
-        "featureType": "all",
-        "elementType": "labels.text.stroke",
-        "stylers": [
-            {
-                "color": "#000000"
+                "featureType": "all",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#ffffff"
+                    }
+                ]
             },
             {
-                "lightness": 13
-            }
-        ]
-    },
-    {
-        "featureType": "administrative",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#000000"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#144b53"
+                "featureType": "all",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                    {
+                        "color": "#000000"
+                    },
+                    {
+                        "lightness": 13
+                    }
+                ]
             },
             {
-                "lightness": 14
+                "featureType": "administrative",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "color": "#000000"
+                    }
+                ]
             },
             {
-                "weight": 1.4
-            }
-        ]
-    },
-    {
-        "featureType": "landscape",
-        "elementType": "all",
-        "stylers": [
-            {
-                "color": "#08304b"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "color": "#0c4152"
+                "featureType": "administrative",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                    {
+                        "color": "#144b53"
+                    },
+                    {
+                        "lightness": 14
+                    },
+                    {
+                        "weight": 1.4
+                    }
+                ]
             },
             {
-                "lightness": 5
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#000000"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#0b434f"
+                "featureType": "landscape",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "color": "#08304b"
+                    }
+                ]
             },
             {
-                "lightness": 25
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#000000"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "color": "#0b3d51"
+                "featureType": "poi",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#0c4152"
+                    },
+                    {
+                        "lightness": 5
+                    }
+                ]
             },
             {
-                "lightness": 16
-            }
-        ]
-    },
-    {
-        "featureType": "road.local",
-        "elementType": "geometry",
-        "stylers": [
+                "featureType": "road.highway",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "color": "#000000"
+                    }
+                ]
+            },
             {
-                "color": "#000000"
-            }
-        ]
-    },
-    {
-        "featureType": "transit",
-        "elementType": "all",
-        "stylers": [
+                "featureType": "road.highway",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                    {
+                        "color": "#0b434f"
+                    },
+                    {
+                        "lightness": 25
+                    }
+                ]
+            },
             {
-                "color": "#146474"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [
+                "featureType": "road.arterial",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "color": "#000000"
+                    }
+                ]
+            },
             {
-                "color": "#021019"
+                "featureType": "road.arterial",
+                "elementType": "geometry.stroke",
+                "stylers": [
+                    {
+                        "color": "#0b3d51"
+                    },
+                    {
+                        "lightness": 16
+                    }
+                ]
+            },
+            {
+                "featureType": "road.local",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#000000"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "color": "#146474"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "color": "#021019"
+                    }
+                ]
             }
-        ]
-    }
-],
-{name: 'Midnight Map'});
+        ],
+        {name: 'Midnight Map'});
 
     // Constructor creates a new map - only center and zoom are required.
     var self = this;
@@ -364,6 +419,7 @@ AppViewModel.prototype.initMap = function(){
     // document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
 
 }
+
 
 
 var appViewModel = new AppViewModel();
