@@ -44,6 +44,7 @@
         padding: 10px 10px 30px 10px;
         text-align: left;
         width: 340px;
+        overflow-y: auto;
       }
 
       button {

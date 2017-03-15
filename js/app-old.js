@@ -119,21 +119,18 @@ function hideRicksHood() {
 }
 
 // This function will show markers for all the coffee shops in the area
-function showCoffeeShops(ricksPlaces) {
+function showCoffeeShops(){
+    var $body = $('body');
+    var $fsqHeaderElem = $(#'map-header');
 
     var coffeeQueryURL = "https://api.foursquare.com/v2/venues/search?client_id=QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW&client_secret=B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5&v=20170315&ll=32.01,-102.10&query=coffee";
     $.getJSON(coffeeQueryURL, function(data){
-    	console.log(data);
-    	var fsVenues = data.response.venues;
 
-    	fsVenues.forEach(function(venue) {
-    		//console.log(venue);
+        $fsqHeaderElem.text('Coffee Shops');
 
+        coffeePlaces = data.response.docs;
 
-
-    		ricksPlaces.push(venue);
-    	});
-
+// how to set locations to json results???
 
     })
 }
@@ -156,11 +153,7 @@ function makeMarkerIcon(markerColor) {
 // This function makes the locations observable
 var AppViewModel = function(){
     var self = this;
-    //this.ricksPlaces = ko.observableArray(locations);
-    this.ricksPlaces = ko.observableArray();
-    showCoffeeShops(this.ricksPlaces);
-
-
+    this.ricksPlaces = ko.observableArray(locations);
 
 };
 
@@ -426,7 +419,7 @@ AppViewModel.prototype.initMap = function(){
         markers.push(marker);
         // Create an onclick event to open an infowindow at each marker.
 
-      //  self.ricksPlaces()[i].marker=marker;
+        self.ricksPlaces()[i].marker=marker;
 
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
