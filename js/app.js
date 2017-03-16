@@ -127,14 +127,32 @@ function showCoffeeShops(ricksPlaces) {
     	var fsVenues = data.response.venues;
 
     	fsVenues.forEach(function(venue) {
-    		//console.log(venue);
-
-
+    		console.log(venue);
 
     		ricksPlaces.push(venue);
+            console.log("fsVenues.length = " + fsVenues.length);
+                console.log("ricksPlaces" + ricksPlaces().length);
     	});
+    console.log("fsVenues.length = " + fsVenues.length);
+    console.log(ricksPlaces().length);
+    // })
 
+    for (var i = 0; i < fsVenues.length; i++) { // why can't call outside of getJSON?
+        var positionLat = parseFloat(fsVenues[i].location.lat);
+        var positionLng = parseFloat(fsVenues[i].location.lng);
+        console.log("location" + positionLat + positionLng);
+        var position = (positionLat + "," + positionLng);
+        console.log (position);
+        var title = fsVenues[i].name;
 
+        var marker = new google.maps.Marker({
+            position: {lat: positionLat, lng: positionLng},
+            title: title,
+            id: i
+        });
+
+        markers.push(marker);
+    }
     })
 }
 
