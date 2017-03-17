@@ -152,6 +152,12 @@ function showCoffeeShops(ricksPlaces) {
         });
 
         markers.push(marker);
+
+        var largeInfowindow = new google.maps.InfoWindow();
+
+        marker.addListener('click', function() {
+            populateInfoWindow(this, largeInfowindow);
+        });
     }
     })
 }
