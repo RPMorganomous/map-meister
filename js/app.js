@@ -9,7 +9,8 @@ var map;
 // blank array for all the markers
 var markers = [];
 
-
+var clientID = "QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW";
+var secret = "B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5";
 // these are locations in my neighborhood
 var locations = [
         {title: 'Ricks House', location: {lat: 32.010396, lng: -102.107679},
@@ -96,6 +97,10 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 
+function showSearchFor(){
+
+}
+
 // This function will loop through the markers array and display them all.
 function showRicksHood() {
     var bounds = new google.maps.LatLngBounds();
@@ -118,10 +123,38 @@ function hideRicksHood() {
     }
 }
 
+// This is a simple function that adds a leading 0 to a string
+// for the purpose of making a date format of YYYYMMDD which is
+// required for the foursquare query url
+function pad(n){
+    return (n <10) ? ("0" + n) : n;
+}
+
 // This function will show markers for all the coffee shops in the area
 function showCoffeeShops(ricksPlaces) {
 
-    var coffeeQueryURL = "https://api.foursquare.com/v2/venues/search?client_id=QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW&client_secret=B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5&v=20170315&ll=32.01,-102.10&query=coffee";
+    var date = new Date().getFullYear().toString()
+        + pad((new Date().getMonth() + 1).toString())
+        + new Date().getDate().toString();
+    console.log ("date = " + date);
+
+// category data url:
+// https://api.foursquare.com/v2/venues/categories?client_id=QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW&client_secret=B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5&v=20170315&ll=32.01,-102.10
+
+    var coffeeQueryURL = "https://api.foursquare.com/v2/venues/search?" +
+    "categoryID=" +
+    "" +
+    "&client_id=" +
+    clientID +
+    "&client_secret=" +
+    secret +
+    "&v=" +
+    date + // format is YYYYMMDD
+    "&ll=" +
+    "32.01,-102.10" + // Midland, Texas
+    "&query=" +
+    "coffee";
+
     $.getJSON(coffeeQueryURL, function(data){
     	console.log(data);
     	var fsVenues = data.response.venues;
@@ -141,8 +174,8 @@ function showCoffeeShops(ricksPlaces) {
         var positionLat = parseFloat(fsVenues[i].location.lat);
         var positionLng = parseFloat(fsVenues[i].location.lng);
         console.log("location" + positionLat + positionLng);
-        var position = (positionLat + "," + positionLng);
-        console.log (position);
+        // var position = (positionLat + "," + positionLng);
+        // console.log (position);
         var title = fsVenues[i].name;
 
         var marker = new google.maps.Marker({
@@ -183,6 +216,7 @@ var AppViewModel = function(){
     //this.ricksPlaces = ko.observableArray(locations);
     this.ricksPlaces = ko.observableArray();
     showCoffeeShops(this.ricksPlaces);
+    this.searchFor = ko.observable("Coffee");
 
 
 

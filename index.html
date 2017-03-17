@@ -22,6 +22,12 @@
         </div>
         <hr>
         <div class="Center">
+          Search for: <input data-bind="value: searchFor">
+          <button data-bind="click: showSearchFor">KO Search
+          </button>
+        </div>
+        <hr>
+        <div class="Center">
           <!-- <button data-bind="click: showCoffeeShops(ricksPlaces)">KO Show Coffee Shops</button> -->
           <ul data-bind="foreach: ricksPlaces">
             <li data-bind="text: name"></li>
