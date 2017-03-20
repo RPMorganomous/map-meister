@@ -5,7 +5,7 @@
 // MODEL - used to initialize and store places data
 
 var map;
-
+var locationsLength;
 
 
 // blank array for all the markers
@@ -171,7 +171,7 @@ function showSearchResults(ricksPlaces, searchFor) {
             id: i
         });
 
-        ricksPlaces()[i].marker = marker;
+        ricksPlaces()[i + locationsLength].marker = marker;
         markers.push(marker);
 
         largeInfowindow = new google.maps.InfoWindow();
@@ -211,6 +211,7 @@ var AppViewModel = function(){
 this.newSearch = function (searchFor){
     // clear the view model list
     this.ricksPlaces([]);
+    locationsLength = 0;
 
     if (markers.length > 0) {
         for (i=0; i < markers.length; i++) {
@@ -497,12 +498,12 @@ AppViewModel.prototype.initMap = function(){
         });
 
         // Push the marker to our array of markers.
-        //markers.push(marker);
+        markers.push(marker);
 
-        //this.ricksPlaces()[i].marker = marker;
+        self.ricksPlaces.push(marker);
 
-        // Push the marker to the view model
-        //self.ricksPlaces().push(marker);
+        self.ricksPlaces()[i].marker = marker;
+
 
         // Create an onclick event to open an infowindow at each marker.
 
@@ -520,8 +521,10 @@ AppViewModel.prototype.initMap = function(){
           });
 
         // Extend the boundaries of the map for each marker
-        bounds.extend(markers[i].position);
+        //bounds.extend(markers[i].position);
 
+        // will need to offset the ricksPlaces array
+        locationsLength = markers.length;
     }
 
 }
