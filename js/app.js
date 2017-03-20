@@ -169,6 +169,7 @@ function showSearchResults(ricksPlaces, searchFor) {
             id: i
         });
 
+        ricksPlaces()[i].marker = marker;
         markers.push(marker);
 
         var largeInfowindow = new google.maps.InfoWindow();
@@ -221,7 +222,7 @@ this.newSearch = function (searchFor){
 
 showInfo = function (){
     var largeInfowindow = new google.maps.InfoWindow();
-    populateInfoWindow(this, largeInfowindow);
+    populateInfoWindow(this.marker, largeInfowindow);
 };
 
 };
@@ -467,7 +468,8 @@ AppViewModel.prototype.initMap = function(){
     var largeInfowindow = new google.maps.InfoWindow();
     var bounds = new google.maps.LatLngBounds();
 
-    // The following group uses the location array to create an array of markers on initialize.
+    // The following group uses the location array to create
+    // an array of markers on initialize.
     for (var i = 0; i < locations.length; i++) {
 
     // Get the position from the location array.
@@ -477,7 +479,6 @@ AppViewModel.prototype.initMap = function(){
 
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
-            // map: map,
             position: position,
             title: title,
             content: content,
@@ -488,10 +489,12 @@ AppViewModel.prototype.initMap = function(){
         });
 
         // Push the marker to our array of markers.
-        markers.push(marker);
+        //markers.push(marker);
+
+        //ricksPlaces()[i].marker = marker;
 
         // Push the marker to the view model
-        this.ricksPlaces.push(marker);
+        //this.ricksPlaces.push(marker);
 
         // Create an onclick event to open an infowindow at each marker.
 
