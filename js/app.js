@@ -6,6 +6,8 @@
 
 var map;
 
+
+
 // blank array for all the markers
 var markers = [];
 
@@ -172,7 +174,7 @@ function showSearchResults(ricksPlaces, searchFor) {
         ricksPlaces()[i].marker = marker;
         markers.push(marker);
 
-        var largeInfowindow = new google.maps.InfoWindow();
+        largeInfowindow = new google.maps.InfoWindow();
 
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
@@ -220,8 +222,14 @@ this.newSearch = function (searchFor){
     showSearchResults(self.ricksPlaces, searchFor);
 }
 
-showInfo = function (){
+invokeInfoWindow = function (){
     var largeInfowindow = new google.maps.InfoWindow();
+    return largeInfowindow;
+}
+
+showInfo = function (){
+    //largeInfowindow = invokeInfoWindow();
+    //var largeInfowindow = new google.maps.InfoWindow();
     populateInfoWindow(this.marker, largeInfowindow);
 };
 
@@ -491,10 +499,10 @@ AppViewModel.prototype.initMap = function(){
         // Push the marker to our array of markers.
         //markers.push(marker);
 
-        //ricksPlaces()[i].marker = marker;
+        //this.ricksPlaces()[i].marker = marker;
 
         // Push the marker to the view model
-        //this.ricksPlaces.push(marker);
+        //self.ricksPlaces().push(marker);
 
         // Create an onclick event to open an infowindow at each marker.
 
