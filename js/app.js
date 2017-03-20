@@ -121,11 +121,11 @@ function hideRicksHood() {
     }
 }
 
-function newSearch(ricksPlaces, searchFor){
-    markers = [];
-    // this.ricksPlaces = [];
-    showSearchResults(ricksPlaces, searchFor);
-}
+// function newSearch(ricksPlaces, searchFor){
+//     markers = [];
+//     // this.ricksPlaces = [];
+//     showSearchResults(ricksPlaces, searchFor);
+// }
 
 // This is a simple function that adds a leading 0 to a string
 // for the purpose of making a date format of YYYYMMDD which is
@@ -166,6 +166,8 @@ function showSearchResults(ricksPlaces, searchFor) {
     	console.log(data);
     	var fsVenues = data.response.venues;
 
+        // ricksPlaces([]);
+
     	fsVenues.forEach(function(venue) {
     		console.log(venue);
 
@@ -173,6 +175,14 @@ function showSearchResults(ricksPlaces, searchFor) {
             console.log("fsVenues.length = " + fsVenues.length);
                 console.log("ricksPlaces" + ricksPlaces().length);
     	});
+
+// if (markers.length > 0) {
+//          for (i=0; i <markers.length; i++) {
+//              markers[i].setMap(null);
+//              markers = [];
+//          }
+// }
+
     console.log("fsVenues.length = " + fsVenues.length);
     console.log(ricksPlaces().length);
     // })
@@ -229,6 +239,23 @@ var AppViewModel = function(){
     // showSearchResults(this.ricksPlaces);
     console.log("Twice");
     // showSearchFor(this.searchFor);
+
+this.newSearch = function (searchFor){
+    // clear the view model list
+    this.ricksPlaces([]);
+
+console.log("markers.length = " + markers.length);
+
+    if (markers.length > 0) {
+             for (i=0; i < markers.length; i++) {
+                 markers[i].setMap(null);
+                 console.log("markers[i] = " + i);
+             }
+    markers = [];
+    }
+
+    showSearchResults(self.ricksPlaces, searchFor);
+}
 
 };
 
