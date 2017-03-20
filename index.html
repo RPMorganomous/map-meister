@@ -23,14 +23,14 @@
         <hr>
         <div class="Center">
           Search for: <input data-bind="value: searchFor">
-          <button data-bind="click: showSearchFor">KO Search
+          <button data-bind="click: newSearch(ricksPlaces, searchFor)">KO Search
           </button>
         </div>
         <hr>
         <div class="Center">
           <!-- <button data-bind="click: showCoffeeShops(ricksPlaces)">KO Show Coffee Shops</button> -->
           <ul data-bind="foreach: ricksPlaces">
-            <li data-bind="text: name"></li>
+            <li data-bind="text: name, click: populateInfoWindow"></li>
           </ul>
         </div>
       </div>

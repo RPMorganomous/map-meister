@@ -97,7 +97,74 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 
+function showSearchFor(ricksPlaces){
+    var date = new Date().getFullYear().toString()
+        + pad((new Date().getMonth() + 1).toString())
+        + new Date().getDate().toString();
+    console.log ("date = " + date);
 
+// category data url:
+// https://api.foursquare.com/v2/venues/categories?client_id=QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW&client_secret=B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5&v=20170315&ll=32.01,-102.10
+
+    var coffeeQueryURL = "https://api.foursquare.com/v2/venues/search?" +
+    "categoryID=" +
+    "" +
+    "&client_id=" +
+    clientID +
+    "&client_secret=" +
+    secret +
+    "&v=" +
+    date + // format is YYYYMMDD
+    "&ll=" +
+    "32.01,-102.10" + // Midland, Texas
+    "&query=" +
+    "bowling";
+
+    $.getJSON(coffeeQueryURL, function(data){
+        console.log(data);
+        var fsVenues = data.response.venues;
+
+        fsVenues.forEach(function(venue) {
+            console.log(venue);
+
+            ricksPlaces.push(venue);
+            console.log("fsVenues.length = " + fsVenues.length);
+                console.log("ricksPlaces" + ricksPlaces().length);
+        });
+    console.log("fsVenues.length = " + fsVenues.length);
+    console.log(ricksPlaces().length);
+    // })
+
+    for (var i = 0; i < fsVenues.length; i++) { // why can't call outside of getJSON?
+        var positionLat = parseFloat(fsVenues[i].location.lat);
+        var positionLng = parseFloat(fsVenues[i].location.lng);
+        console.log("location" + positionLat + positionLng);
+        // var position = (positionLat + "," + positionLng);
+        // console.log (position);
+        var title = fsVenues[i].name;
+
+        var marker = new google.maps.Marker({
+            position: {lat: positionLat, lng: positionLng},
+            title: title,
+            id: i
+        });
+
+        markers.push(marker);
+
+        var largeInfowindow = new google.maps.InfoWindow();
+
+        marker.addListener('click', function() {
+            populateInfoWindow(this, largeInfowindow);
+        });
+
+    showRicksHood();
+
+    }
+    })
+
+
+
+}
 
 // This function will loop through the markers array and display them all.
 function showRicksHood() {
@@ -121,12 +188,6 @@ function hideRicksHood() {
     }
 }
 
-function newSearch(ricksPlaces, searchFor){
-    markers = [];
-    // this.ricksPlaces = [];
-    showSearchResults(ricksPlaces, searchFor);
-}
-
 // This is a simple function that adds a leading 0 to a string
 // for the purpose of making a date format of YYYYMMDD which is
 // required for the foursquare query url
@@ -135,7 +196,7 @@ function pad(n){
 }
 
 // This function will show markers for all the coffee shops in the area
-function showSearchResults(ricksPlaces, searchFor) {
+function showCoffeeShops(ricksPlaces) {
 
     var date = new Date().getFullYear().toString()
         + pad((new Date().getMonth() + 1).toString())
@@ -145,7 +206,7 @@ function showSearchResults(ricksPlaces, searchFor) {
 // category data url:
 // https://api.foursquare.com/v2/venues/categories?client_id=QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW&client_secret=B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5&v=20170315&ll=32.01,-102.10
 
-    var SearchQueryURL = "https://api.foursquare.com/v2/venues/search?" +
+    var coffeeQueryURL = "https://api.foursquare.com/v2/venues/search?" +
     "categoryID=" +
     "" +
     "&client_id=" +
@@ -157,12 +218,9 @@ function showSearchResults(ricksPlaces, searchFor) {
     "&ll=" +
     "32.01,-102.10" + // Midland, Texas
     "&query=" +
-    searchFor();
-    // "bowling";
+    "coffee";
 
-    console.log(SearchQueryURL);
-
-    $.getJSON(SearchQueryURL, function(data){
+    $.getJSON(coffeeQueryURL, function(data){
     	console.log(data);
     	var fsVenues = data.response.venues;
 
@@ -197,12 +255,9 @@ function showSearchResults(ricksPlaces, searchFor) {
 
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
-
         });
-        showRicksHood();
     }
     })
-
 }
 
 
@@ -224,17 +279,16 @@ function makeMarkerIcon(markerColor) {
 var AppViewModel = function(){
     var self = this;
     //this.ricksPlaces = ko.observableArray(locations);
-    this.searchFor = ko.observable("");
     this.ricksPlaces = ko.observableArray();
-    // showSearchResults(this.ricksPlaces);
-    console.log("Twice");
-    // showSearchFor(this.searchFor);
+    showCoffeeShops(this.ricksPlaces);
+    this.searchFor = ko.observable("Bowling");
+
+
 
 };
 
 AppViewModel.prototype.initMap = function(){
 
-    console.log("Once");
     // Create a couple of styles arrays to use with the map.
     // Desert Map
         var styledMapType = new google.maps.StyledMapType(
@@ -515,7 +569,6 @@ AppViewModel.prototype.initMap = function(){
         // map.fitBounds(bounds);
     }
 
-    // showSearchResults(this.ricksPlaces);
     // document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
     // document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
 
