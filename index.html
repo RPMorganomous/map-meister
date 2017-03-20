@@ -28,9 +28,8 @@
         </div>
         <hr>
         <div class="Center">
-          <!-- <button data-bind="click: showCoffeeShops(ricksPlaces)">KO Show Coffee Shops</button> -->
           <ul data-bind="foreach: ricksPlaces">
-            <li data-bind="text: name, click: populateInfoWindow"></li>
+            <li data-bind="text: name, click: showInfo"></li>
           </ul>
         </div>
       </div>

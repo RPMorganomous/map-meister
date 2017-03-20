@@ -121,12 +121,6 @@ function hideRicksHood() {
     }
 }
 
-// function newSearch(ricksPlaces, searchFor){
-//     markers = [];
-//     // this.ricksPlaces = [];
-//     showSearchResults(ricksPlaces, searchFor);
-// }
-
 // This is a simple function that adds a leading 0 to a string
 // for the purpose of making a date format of YYYYMMDD which is
 // required for the foursquare query url
@@ -140,10 +134,6 @@ function showSearchResults(ricksPlaces, searchFor) {
     var date = new Date().getFullYear().toString()
         + pad((new Date().getMonth() + 1).toString())
         + new Date().getDate().toString();
-    console.log ("date = " + date);
-
-// category data url:
-// https://api.foursquare.com/v2/venues/categories?client_id=QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW&client_secret=B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5&v=20170315&ll=32.01,-102.10
 
     var SearchQueryURL = "https://api.foursquare.com/v2/venues/search?" +
     "categoryID=" +
@@ -158,41 +148,19 @@ function showSearchResults(ricksPlaces, searchFor) {
     "32.01,-102.10" + // Midland, Texas
     "&query=" +
     searchFor();
-    // "bowling";
-
-    console.log(SearchQueryURL);
 
     $.getJSON(SearchQueryURL, function(data){
-    	console.log(data);
     	var fsVenues = data.response.venues;
 
-        // ricksPlaces([]);
-
     	fsVenues.forEach(function(venue) {
-    		console.log(venue);
 
     		ricksPlaces.push(venue);
-            console.log("fsVenues.length = " + fsVenues.length);
-                console.log("ricksPlaces" + ricksPlaces().length);
     	});
-
-// if (markers.length > 0) {
-//          for (i=0; i <markers.length; i++) {
-//              markers[i].setMap(null);
-//              markers = [];
-//          }
-// }
-
-    console.log("fsVenues.length = " + fsVenues.length);
-    console.log(ricksPlaces().length);
-    // })
 
     for (var i = 0; i < fsVenues.length; i++) { // why can't call outside of getJSON?
         var positionLat = parseFloat(fsVenues[i].location.lat);
         var positionLng = parseFloat(fsVenues[i].location.lng);
-        console.log("location" + positionLat + positionLng);
-        // var position = (positionLat + "," + positionLng);
-        // console.log (position);
+
         var title = fsVenues[i].name;
 
         var marker = new google.maps.Marker({
@@ -215,7 +183,6 @@ function showSearchResults(ricksPlaces, searchFor) {
 
 }
 
-
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -233,35 +200,34 @@ function makeMarkerIcon(markerColor) {
 // This function makes the locations observable
 var AppViewModel = function(){
     var self = this;
-    //this.ricksPlaces = ko.observableArray(locations);
+
     this.searchFor = ko.observable("");
     this.ricksPlaces = ko.observableArray();
-    // showSearchResults(this.ricksPlaces);
-    console.log("Twice");
-    // showSearchFor(this.searchFor);
+
 
 this.newSearch = function (searchFor){
     // clear the view model list
     this.ricksPlaces([]);
 
-console.log("markers.length = " + markers.length);
-
     if (markers.length > 0) {
-             for (i=0; i < markers.length; i++) {
+        for (i=0; i < markers.length; i++) {
                  markers[i].setMap(null);
-                 console.log("markers[i] = " + i);
-             }
+        }
     markers = [];
     }
 
     showSearchResults(self.ricksPlaces, searchFor);
 }
 
+showInfo = function (){
+    var largeInfowindow = new google.maps.InfoWindow();
+    populateInfoWindow(this, largeInfowindow);
+};
+
 };
 
 AppViewModel.prototype.initMap = function(){
 
-    console.log("Once");
     // Create a couple of styles arrays to use with the map.
     // Desert Map
         var styledMapType = new google.maps.StyledMapType(
@@ -503,10 +469,12 @@ AppViewModel.prototype.initMap = function(){
 
     // The following group uses the location array to create an array of markers on initialize.
     for (var i = 0; i < locations.length; i++) {
+
     // Get the position from the location array.
         var position = locations[i].location;
         var title = locations[i].title;
         var content = locations[i].content;
+
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
             // map: map,
@@ -527,8 +495,6 @@ AppViewModel.prototype.initMap = function(){
 
         // Create an onclick event to open an infowindow at each marker.
 
-      //  self.ricksPlaces()[i].marker=marker;
-
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
         });
@@ -544,20 +510,12 @@ AppViewModel.prototype.initMap = function(){
 
         // Extend the boundaries of the map for each marker
         bounds.extend(markers[i].position);
-        // map.fitBounds(bounds);
-    }
 
-    // showSearchResults(this.ricksPlaces);
-    // document.getElementById('show-ricksHood').addEventListener('click', showRicksHood);
-    // document.getElementById('hide-ricksHood').addEventListener('click', hideRicksHood);
+    }
 
 }
 
-
-
 var appViewModel = new AppViewModel();
-
-
 
 ko.applyBindings(appViewModel);
 
