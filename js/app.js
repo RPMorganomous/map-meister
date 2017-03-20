@@ -488,11 +488,16 @@ AppViewModel.prototype.initMap = function(){
             content: content,
             animation: google.maps.Animation.DROP,
             icon: defaultIcon,
-            id: i
+            id: i,
+            name: title
         });
 
         // Push the marker to our array of markers.
         markers.push(marker);
+
+        // Push the marker to the view model
+        this.ricksPlaces.push(marker);
+
         // Create an onclick event to open an infowindow at each marker.
 
       //  self.ricksPlaces()[i].marker=marker;
