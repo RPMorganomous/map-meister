@@ -55,6 +55,10 @@ function populateInfoWindow(marker, infowindow) {
             } else {
 
             marker.setAnimation(google.maps.Animation.BOUNCE);
+            // stop bounce after 1400 milliseconds -- about 2 bounces
+            setTimeout(function(){
+                marker.setAnimation(null);
+            }, 3000);
         }
 
         var streetViewService = new google.maps.StreetViewService();
