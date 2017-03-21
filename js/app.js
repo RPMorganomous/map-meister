@@ -1,41 +1,68 @@
 // MODEL and VIEWMODEL for neighborhood map web application
 // by Rick Morgan - mba.rick@gmail.com
 
+//============================================================
+// MODEL section - used to initialize and store locations data
+//============================================================
 
-// MODEL - used to initialize and store places data
-
+// map is used to display location objects
 var map;
-var locationsLength;
 
+// locationsLength is used to account for custom location objects
+var locationsLength;
 
 // blank array for all the markers
 var markers = [];
 
+// clientID and secret are required for Foursquare json request
 var clientID = "QU01LFBIGT44FNACHRMVI1FCKBNE5LH25D2MDJS4ESIOOFLW";
 var secret = "B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5";
-// these are locations in my neighborhood
-var locations = [
-        {title: 'Ricks House', location: {lat: 32.010396, lng: -102.107679},
-        content: 'Rick is a cool guy.'},
-        {title: 'Fasken Park', location: {lat: 32.012297, lng: -102.106606},
-        content: 'Faskin Park is a nice place for a picknick.'},
-        {title: 'Connies House', location: {lat: 32.010532, lng: -102.107084},
-        content: 'Connie is our neighbor.'},
-        {title: 'Lauras House', location: {lat: 32.010469, lng: -102.107395},
-        content: 'Laura is our hairstylist.'},
-        {title: 'Kims House', location: {lat: 32.010332, lng: -102.107953},
-        content: 'Kims son, Sean, is my sons friend.'},
+
+// These custom location objects represent points of interest in my town,
+// they will be displayed as blue markers and included with the json
+// requested data
+var locations =
+    [
+        {
+            title: 'Ricks House',
+            location: {lat: 32.010396, lng: -102.107679},
+            content: 'Rick has a nice house.'
+        },
+        {
+            title: 'Fasken Park',
+            location: {lat: 32.012297, lng: -102.106606},
+            content: 'Faskin Park is a nice place for a picnic.'
+        },
+        {
+            title: 'Midland College',
+            location: {lat: 32.030844, lng: -102.106315},
+            content: 'Rick went to school here.'
+        },
+        {
+            title: 'Dojo',
+            location: {lat: 31.998896, lng: -102.1163},
+            content: 'This is where we study mixed martial arts.'
+        },
+        {
+            title: 'Dog Park',
+            location: {lat: 32.036648, lng: -102.072355},
+            content: 'A great place to play frisbee with pets.'
+        },
     ];
 
-// VIEWMODEL
+//============================================
+// VIEWMODEL section - used to control the dom
+//============================================
 
+// Handle errors if Google Maps api fails
 function loadError(source) {
-    alert(source + ' could not be loaded.');
+    alert(source + ' could not be initialized.');
 }
 
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow which will open at the marker that is clicked, and populate based
-// on that markers position.
+// This function populates the infowindow when the custom marker is clicked.
+// It only allows one infowindow which will open at the marker that is clicked,
+// and populate based on that markers position.  It also adds a nifty bounce
+// feature to just the custom markers.
 function populateInfoWindow(marker, infowindow) {
 
     // Check to make sure the infowindow is not already opened on this marker.
@@ -44,33 +71,36 @@ function populateInfoWindow(marker, infowindow) {
         // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
 
+        // Set to current marker
         infowindow.marker = marker;
 
-        // Make sure the marker property is cleared if the infowindow is closed.
+        // Make sure the marker property is cleared if the infowindow closed.
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
 
         // Make the markers bounce when selected
         if (marker.getAnimation() !== null) {
-
             marker.setAnimation(null);
 
             } else {
 
             marker.setAnimation(google.maps.Animation.BOUNCE);
-            // stop bounce after 1400 milliseconds -- about 2 bounces
+            // Stop bounce after 3000 milliseconds = 4 bounces
             setTimeout(function(){
                 marker.setAnimation(null);
             }, 3000);
         }
 
+        // initialize a new google street view service with a radius
+        // of 500 to find images in semi-remote areas
         var streetViewService = new google.maps.StreetViewService();
         var radius = 500;
 
-        // In case the status is OK, which means the pano was found, compute the
-        // position of the streetview image, then calculate the heading, then get a
-        // panorama from that and set the options
+        // getStreatView is going to first check the status and if the pano
+        // was found, it will compute the position of the streetview image,
+        // then calculate the heading, then get a panorama from that and set
+        // the options
         function getStreetView(data, status) {
 
             if (status == google.maps.StreetViewStatus.OK) {
@@ -79,7 +109,9 @@ function populateInfoWindow(marker, infowindow) {
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
 
-                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                infowindow.setContent('<div>' +
+                    marker.title +
+                    '</div><div id="pano"></div>');
 
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
@@ -99,22 +131,24 @@ function populateInfoWindow(marker, infowindow) {
         }
 
        // Use streetview service to get the closest streetview image within
-       // 500 meters of the markers position
-       streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+       // 500 meters ( var radius: set in populateInfoWindow) of the
+       // markers position
+       streetViewService.getPanoramaByLocation(marker.position, radius,
+            getStreetView);
 
        // Open the infowindow on the correct marker.
        infowindow.open(map, marker);
     }
 }
 
-
-
 // This function will loop through the markers array and display them all.
 function showRicksHood() {
+
     var bounds = new google.maps.LatLngBounds();
 
 // Extend the boundaries of the map for each marker and display the marker
     for (var i = 0; i < markers.length; i++) {
+
         markers[i].setMap(map);
 
         bounds.extend(markers[i].position);
@@ -123,11 +157,12 @@ function showRicksHood() {
     map.fitBounds(bounds);
 }
 
-// This function will loop through the listings and hide them all.
+// This function will loop through the markers and hide them all.
 function hideRicksHood() {
+
     for (var i = 0; i < markers.length; i++) {
 
-    markers[i].setMap(null);
+        markers[i].setMap(null);
     }
 }
 
@@ -138,13 +173,16 @@ function pad(n){
     return (n <10) ? ("0" + n) : n;
 }
 
-// This function will show markers for all the coffee shops in the area
-function showSearchResults(ricksPlaces, searchFor) {
+// This function will show markers for all the places in the area
+// matching the search term.
+function showSearchResults(ricksPlaces, searchForName) {
 
+    // Format the date for the search query url
     var date = new Date().getFullYear().toString()
         + pad((new Date().getMonth() + 1).toString())
         + new Date().getDate().toString();
 
+    // Build the search query url
     var SearchQueryURL = "https://api.foursquare.com/v2/venues/search?" +
     "categoryID=" +
     "" +
@@ -157,8 +195,10 @@ function showSearchResults(ricksPlaces, searchFor) {
     "&ll=" +
     "32.01,-102.10" + // Midland, Texas
     "&query=" +
-    searchFor();
+    searchForName();
 
+
+    // Initialize the array of Foursquare search results asynchronously
     $.getJSON(SearchQueryURL, function(data){
     	var fsVenues = data.response.venues;
 
@@ -167,7 +207,8 @@ function showSearchResults(ricksPlaces, searchFor) {
     		ricksPlaces.push(venue);
     	});
 
-    for (var i = 0; i < fsVenues.length; i++) { // why can't call outside of getJSON?
+    // Create new markers for each object
+    for (var i = 0; i < fsVenues.length; i++) {
         var positionLat = parseFloat(fsVenues[i].location.lat);
         var positionLng = parseFloat(fsVenues[i].location.lng);
 
@@ -179,34 +220,43 @@ function showSearchResults(ricksPlaces, searchFor) {
             id: i
         });
 
+        // Add the markers to the array begining after the custom markers
         ricksPlaces()[i + locationsLength].marker = marker;
+
+        // Add the markers to the markers array
         markers.push(marker);
 
+        // Assign new maps infowindows for the Foursquare marker objects
         largeInfowindow = new google.maps.InfoWindow();
 
+        // Populate the infowindows upon marker click
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
 
         });
+
+        // Display the markers
         showRicksHood();
     }
     })
+
+    // If the Foursquare request fails, alert the user and display the
+    // custom markers
     .fail(function(error){
-        //var largeInfowindow = new google.maps.InfoWindow();
-        //showRicksHood();
-        alert("Foursquare data failed to load.  Check internet connection.  Error #" + error.status);
+        alert("Foursquare data failed to load.  Error : " + error.status);
         showRicksHood();
-        //var largeInfowindow = new google.maps.InfoWindow();
     });
 
-};
+}
 
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
 function makeMarkerIcon(markerColor) {
     var markerImage = new google.maps.MarkerImage(
-        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor + '|40|_|%E2%80%A2',
+        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+
+        markerColor +
+        '|40|_|%E2%80%A2',
 
         new google.maps.Size(21, 34),
         new google.maps.Point(0, 0),
@@ -215,37 +265,38 @@ function makeMarkerIcon(markerColor) {
         return markerImage;
 }
 
-// This function makes the locations observable
+// This function makes the locations observable by knockout.js (ko)
 var AppViewModel = function(){
     var self = this;
 
-    this.searchFor = ko.observable("");
+    this.searchForName = ko.observable("");
     this.ricksPlaces = ko.observableArray();
 
 
-this.newSearch = function (searchFor){
+this.newSearch = function (searchForName){
     // clear the view model list
     this.ricksPlaces([]);
+
+    // Because no custom markers will be displayed after a search, reset
+    // length of locations to begin populating the new array at item 0
     locationsLength = 0;
 
+    // Remove any existing markers
     if (markers.length > 0) {
         for (i=0; i < markers.length; i++) {
                  markers[i].setMap(null);
         }
+
+    // Empty the markers array
     markers = [];
     }
 
-    showSearchResults(self.ricksPlaces, searchFor);
-}
+    // Execute the new Foursquare search
+    showSearchResults(self.ricksPlaces, searchForName);
+};
 
-invokeInfoWindow = function (){
-    var largeInfowindow = new google.maps.InfoWindow();
-    return largeInfowindow;
-}
-
+// Get the data for the infowindow
 showInfo = function (){
-    //largeInfowindow = invokeInfoWindow();
-    //var largeInfowindow = new google.maps.InfoWindow();
     populateInfoWindow(this.marker, largeInfowindow);
 };
 
@@ -468,28 +519,41 @@ AppViewModel.prototype.initMap = function(){
     // Constructor creates a new map - only center and zoom are required.
     var self = this;
 
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 32.010394, lng: -102.107687},
-        zoom: 13,
-        mapTypeControl: true, // lets the user select satellite view
-        mapTypeControlOptions: {
-            mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain',
-                'styled_map', 'midnight_map']
-        }
-    });
+    map = new google.maps.Map(document.getElementById('map'),
+        {
+            center: {lat: 32.010394, lng: -102.107687},
+            zoom: 13,
+            mapTypeControl: true, // lets the user select satellite view
+            mapTypeControlOptions:
+                {
+                    mapTypeIds:
+                        [
+                            'roadmap',
+                            'satellite',
+                            'hybrid',
+                            'terrain',
+                            'styled_map',
+                            'midnight_map'
+                        ]
+                }
+        });
 
+    // Assign the custom maps
     map.mapTypes.set('styled_map', styledMapType);
     map.mapTypes.set('midnight_map', styledMapTypeMidnight);
     map.setMapTypeId('styled_map');
 
-        // Style the markers a bit. This will be our listing marker icon.
-        var defaultIcon = makeMarkerIcon('0091ff');
+    // Style the markers a bit. This will be the listing marker icon.
+    var defaultIcon = makeMarkerIcon('0091ff');
 
-        // Create a "highlighted location" marker color for when the user
-        // mouses over the marker.
-        var highlightedIcon = makeMarkerIcon('FFFF24');
+    // Create a "highlighted location" marker color for when the user
+    // mouses over the marker.
+    var highlightedIcon = makeMarkerIcon('FFFF24');
 
+    // Set the new maps infowindow
     var largeInfowindow = new google.maps.InfoWindow();
+
+    // Set the new maps boundry
     var bounds = new google.maps.LatLngBounds();
 
     // The following group uses the location array to create
@@ -502,26 +566,24 @@ AppViewModel.prototype.initMap = function(){
         var content = locations[i].content;
 
     // Create a marker per location, and put into markers array.
-        var marker = new google.maps.Marker({
-            position: position,
-            title: title,
-            content: content,
-            animation: google.maps.Animation.DROP,
-            icon: defaultIcon,
-            id: i,
-            name: title
-        });
+        var marker = new google.maps.Marker(
+            {
+                position: position,
+                title: title,
+                content: content,
+                animation: google.maps.Animation.DROP,
+                icon: defaultIcon,
+                id: i,
+                name: title
+            });
 
         // Push the marker to our array of markers.
         markers.push(marker);
-
         self.ricksPlaces.push(marker);
-
         self.ricksPlaces()[i].marker = marker;
 
 
         // Create an onclick event to open an infowindow at each marker.
-
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
         });
@@ -531,20 +593,20 @@ AppViewModel.prototype.initMap = function(){
           marker.addListener('mouseover', function() {
             this.setIcon(highlightedIcon);
           });
+
           marker.addListener('mouseout', function() {
             this.setIcon(defaultIcon);
           });
 
-        // Extend the boundaries of the map for each marker
-        //bounds.extend(markers[i].position);
-
-        // will need to offset the ricksPlaces array
+        // Used to offset the ricksPlaces array
         locationsLength = markers.length;
     }
 
-}
+};
 
+// Instantiate a new ViewModel
 var appViewModel = new AppViewModel();
 
+// Apply the knockout.js (ko) bindings
 ko.applyBindings(appViewModel);
 
