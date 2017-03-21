@@ -29,6 +29,10 @@ var locations = [
 
 // VIEWMODEL
 
+function loadError(source) {
+    alert(source + ' could not be loaded.');
+}
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -187,8 +191,15 @@ function showSearchResults(ricksPlaces, searchFor) {
         showRicksHood();
     }
     })
+    .fail(function(error){
+        //var largeInfowindow = new google.maps.InfoWindow();
+        //showRicksHood();
+        alert("Foursquare data failed to load.  Check internet connection.  Error #" + error.status);
+        showRicksHood();
+        //var largeInfowindow = new google.maps.InfoWindow();
+    });
 
-}
+};
 
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
