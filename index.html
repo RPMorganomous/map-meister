@@ -32,9 +32,11 @@
           Filter By: <input data-bind="value: filterBy">
         </div>
         <hr>
-        <div class="collection">
-          <ul class="collection", data-bind="foreach: ricksPlaces">
-            <li class="collection-item active", data-bind="text: name, click: showInfo"></li>
+        <div>
+          <ul data-bind="foreach: ricksPlaces">
+            <li class="collection-item" data-bind="text: name, click: showInfo">
+            </li>
+            <img src="https://ss3.4sqi.net/img/categories_v2/building/school_32.png" />
           </ul>
         </div>
       </div>

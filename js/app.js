@@ -149,7 +149,7 @@ var iwCloseBtn = iwOuter.next();
 // Apply the desired effect to the close button
 iwCloseBtn.css({
   opacity: '1', // by default the close button has an opacity of 0.7
-  //right: '38px', top: '3px', // button repositioning
+  //right: '38px', top: '3px', // button repositioning - visually only
   border: '7px solid #48b5e9', // increasing button border and new color
   'border-radius': '13px', // circular effect
   'box-shadow': '0 0 5px #3990B9' // 3D effect to highlight the button
@@ -260,7 +260,7 @@ function showSearchResults(ricksPlaces, searchForName) {
     // Initialize the array of Foursquare search results asynchronously
     $.getJSON(SearchQueryURL, function(data){
     	var fsVenues = data.response.venues;
-
+        //console.log(fsVenues);
     	fsVenues.forEach(function(venue) {
 
     		ricksPlaces.push(venue);
