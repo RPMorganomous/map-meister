@@ -109,20 +109,52 @@ function populateInfoWindow(marker, infowindow) {
                 var heading = google.maps.geometry.spherical.computeHeading(
                     nearStreetViewLocation, marker.position);
 
-                infowindow.setContent('<div>' +
+                infowindow.setContent('<div id="iw-title">' +
                     marker.title +
                     '</div><div id="pano"></div>');
+
+//===================================================================
+// customizing the infowindow
+/*
+ * The google.maps.event.addListener() event waits for
+ * the creation of the infowindow HTML structure 'domready'
+ * and before the opening of the infowindow defined styles
+ * are applied.
+ */
+google.maps.event.addListener(infowindow, 'domready', function() {
+
+   // Reference to the DIV which receives the contents of the infowindow using jQuery
+var iwOuter = $('.gm-style-iw');
+
+   /* The DIV we want to change is above the .gm-style-iw DIV.
+    * So, we use jQuery and create a iwBackground variable,
+    * and took advantage of the existing reference to .gm-style-iw for the previous DIV with .prev().
+    */
+var iwBackground = iwOuter.prev();
+
+   // Remove the background shadow DIV
+iwBackground.children(':nth-child(2)').css({'display' : 'none'});
+
+   // Remove the white background DIV
+iwBackground.children(':nth-child(4)').css({'display' : 'none'});
+
+});
+
+//===================================================================
+
 
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
                         heading: heading,
-                        pitch: 30
+                        pitch: 0
                         }
                 };
 
                 var panorama = new google.maps.StreetViewPanorama(
                     document.getElementById('pano'), panoramaOptions);
+
+
 
             } else {
                 infowindow.setContent('<div>' + marker.title + '</div>' +
@@ -135,6 +167,11 @@ function populateInfoWindow(marker, infowindow) {
        // markers position
        streetViewService.getPanoramaByLocation(marker.position, radius,
             getStreetView);
+
+   // var iwOuter = $('.gm-style-iw');
+   // var iwBackground = iwOuter.prev();
+   //  iwBackground.children(':nth-child(2)').css({'display' : 'none'});
+   //  iwBackground.children(':nth-child(4)').css({'display' : 'none'});
 
        // Open the infowindow on the correct marker.
        infowindow.open(map, marker);
@@ -247,6 +284,8 @@ function showSearchResults(ricksPlaces, searchForName) {
         showRicksHood();
     });
 
+
+
 }
 
 // This function takes in a COLOR, and then creates a new marker
@@ -267,6 +306,7 @@ function makeMarkerIcon(markerColor) {
 
 // This function makes the locations observable by knockout.js (ko)
 var AppViewModel = function(){
+
     var self = this;
 
     this.searchForName = ko.observable("");
@@ -297,6 +337,7 @@ this.newSearch = function (searchForName){
 
 // Get the data for the infowindow
 showInfo = function (){
+    largeInfowindow.close();
     populateInfoWindow(this.marker, largeInfowindow);
 };
 
@@ -581,7 +622,6 @@ AppViewModel.prototype.initMap = function(){
         markers.push(marker);
         self.ricksPlaces.push(marker);
         self.ricksPlaces()[i].marker = marker;
-
 
         // Create an onclick event to open an infowindow at each marker.
         marker.addListener('click', function() {
