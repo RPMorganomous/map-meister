@@ -592,7 +592,7 @@ AppViewModel.prototype.initMap = function(){
     var highlightedIcon = makeMarkerIcon('FFFF24');
 
     // Set the new maps infowindow
-    this.largeInfowindow = new google.maps.InfoWindow();
+    var largeInfowindow = new google.maps.InfoWindow();
 
     // Set the new maps boundry
     var bounds = new google.maps.LatLngBounds();
