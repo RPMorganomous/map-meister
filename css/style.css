@@ -17,7 +17,7 @@
       }
 
       h1 {
-        color: #4286f4;
+        color: #48b5e9;
         font-size: 22px;
         margin: 0 0 10px 0;
         text-align: center;
@@ -26,6 +26,10 @@
       #hide-ricksHood,
       #show-ricksHood {
         width: 48%;
+      }
+
+      .collection-item {
+
       }
 
       #map {
@@ -47,7 +51,7 @@
         text-align: left;
         width: 340px;
         overflow-y: auto;
-        color: #4286f4;
+        color: #48b5e9;
       }
 
       #iw-container .iw-title {
@@ -67,8 +71,8 @@
          font-weight: bold;
          font-family: sans-serif;
          text-transform: uppercase;
-         background-color: #4286f4;
-         border-color: #4286f4;
+         background-color: #48b5e9;
+         border-color: #48b5e9;
          color: black;
          width: 100px;
 
@@ -78,8 +82,8 @@
          width: 500px !important;
          top: 15px !important;
          left: 0 !important;
-         border-radius: 2px 2px 0 0;
-         background-color: #4286f4;
+         border-radius: 2px 2px 10px 10px;
+         background-color: #48b5e9;
       }
 
       #pano { /* inside the blue box */

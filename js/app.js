@@ -114,7 +114,8 @@ function populateInfoWindow(marker, infowindow) {
                     '</div><div id="pano"></div>');
 
 //===================================================================
-// customizing the infowindow
+// customizing the infowindow based on a great tutorial by
+// Miguel Marnoto, "5 ways to customize Google Maps InfoWindow"
 /*
  * The google.maps.event.addListener() event waits for
  * the creation of the infowindow HTML structure 'domready'
@@ -138,8 +139,29 @@ iwBackground.children(':nth-child(2)').css({'display' : 'none'});
    // Remove the white background DIV
 iwBackground.children(':nth-child(4)').css({'display' : 'none'});
 
+// Taking advantage of the already established reference to
+// div .gm-style-iw with iwOuter variable.
+// You must set a new variable iwCloseBtn.
+// Using the .next() method of JQuery you reference the following div to .gm-style-iw.
+// Is this div that groups the close button elements.
+var iwCloseBtn = iwOuter.next();
+
+// Apply the desired effect to the close button
+iwCloseBtn.css({
+  opacity: '1', // by default the close button has an opacity of 0.7
+  //right: '38px', top: '3px', // button repositioning
+  border: '7px solid #48b5e9', // increasing button border and new color
+  'border-radius': '13px', // circular effect
+  'box-shadow': '0 0 5px #3990B9' // 3D effect to highlight the button
+  });
+
+// The API automatically applies 0.7 opacity to the button after the mouseout event.
+// This function reverses this event to the desired value.
+iwCloseBtn.mouseout(function(){
+  $(this).css({opacity: '1'});
 });
 
+});
 //===================================================================
 
 
@@ -310,12 +332,12 @@ var AppViewModel = function(){
     var self = this;
 
     this.searchForName = ko.observable("");
+    this.filterBy = ko.observable("");
     this.ricksPlaces = ko.observableArray();
 
-
-this.newSearch = function (searchForName){
+    this.newSearch = function (searchForName){
     // clear the view model list
-    this.ricksPlaces([]);
+        this.ricksPlaces([]);
 
     // Because no custom markers will be displayed after a search, reset
     // length of locations to begin populating the new array at item 0

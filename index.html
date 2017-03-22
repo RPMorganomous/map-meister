@@ -28,10 +28,13 @@
           <button data-bind="click: newSearch(searchForName)">KO Search
           </button>
         </div>
-        <hr>
         <div class="Center">
-          <ul data-bind="foreach: ricksPlaces">
-            <li data-bind="text: name, click: showInfo"></li>
+          Filter By: <input data-bind="value: filterBy">
+        </div>
+        <hr>
+        <div class="collection">
+          <ul class="collection", data-bind="foreach: ricksPlaces">
+            <li class="collection-item active", data-bind="text: name, click: showInfo"></li>
           </ul>
         </div>
       </div>
