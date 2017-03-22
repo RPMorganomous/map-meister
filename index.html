@@ -33,11 +33,24 @@
         </div>
         <hr>
         <div>
+<!--                       <table id="t01" style="width:100%" color="blue"> -->
           <ul data-bind="foreach: ricksPlaces">
-            <li class="collection-item" data-bind="text: name, click: showInfo">
+<!--                                 <table id="t01" style="width:100%" color="blue"> -->
+            <li class="collection-item" data-bind= "click: showInfo">
+
+              <table id="t01" style="width:100%" color="blue">
+              <tr>
+              <td rowspan="2">
+              <span class="collection-item" data-bind="text: name"></span>
+              </td>
+              <td>
+              <img class="collection-item" align="right" data-bind="attr: { src: imgURL }"/>
+              </td>
+              </tr>
             </li>
-            <img src="https://ss3.4sqi.net/img/categories_v2/building/school_32.png" />
+            </table>
           </ul>
+<!--                       </table> -->
         </div>
       </div>
       <div id="map" ></div>

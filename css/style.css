@@ -29,11 +29,35 @@
       }
 
       .collection-item {
-        height: 20px;
+        height: 40px;
+        /*line-height: 40px;*/
         list-style-type: none;
         padding: 0;
         margin: 0;
+/*        align-items: right;*/
+        vertical-align: middle;
       }
+
+      #t01{
+        color: #48b5e9;
+/*        align-content: right;*/
+      }
+
+/*table#t01 tr:nth-child(even) {
+    background-color: blue;
+}
+table#t01 tr:nth-child(odd) {
+    background-color: grey;
+}*/
+/*table#t01 tr {
+    color: blue;
+    background-color: black;
+}*/
+
+/*      .collection-item:after {
+      content: url('https://ss3.4sqi.net/img/categories_v2/building/school_32.png');
+      vertical-align: -20%;
+      }*/
 
       #map {
         bottom:0px;
@@ -101,6 +125,6 @@
       .Center {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: left;
         }
 

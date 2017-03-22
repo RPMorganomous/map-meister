@@ -5,6 +5,8 @@
 // MODEL section - used to initialize and store locations data
 //============================================================
 
+// defined here for the Foursquare data
+var imgURL; // = "https://ss3.4sqi.net/img/categories_v2/building/school_32.png"
 // map is used to display location objects
 var map;
 
@@ -26,27 +28,32 @@ var locations =
         {
             title: 'Ricks House',
             location: {lat: 32.010396, lng: -102.107679},
-            content: 'Rick has a nice house.'
+            content: 'Rick has a nice house.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/arts_entertainment/arcade_32.png'
         },
         {
             title: 'Fasken Park',
             location: {lat: 32.012297, lng: -102.106606},
-            content: 'Faskin Park is a nice place for a picnic.'
+            content: 'Faskin Park is a nice place for a picnic.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/park_32.png'
         },
         {
             title: 'Midland College',
             location: {lat: 32.030844, lng: -102.106315},
-            content: 'Rick went to school here.'
+            content: 'Rick went to school here.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/education/other_32.png'
         },
         {
             title: 'Dojo',
             location: {lat: 31.998896, lng: -102.1163},
-            content: 'This is where we study mixed martial arts.'
+            content: 'This is where we study mixed martial arts.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/shops/gym_martialarts_32.png'
         },
         {
             title: 'Dog Park',
             location: {lat: 32.036648, lng: -102.072355},
-            content: 'A great place to play frisbee with pets.'
+            content: 'A great place to play frisbee with pets.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/dogrun_32.png'
         },
     ];
 
@@ -260,8 +267,35 @@ function showSearchResults(ricksPlaces, searchForName) {
     // Initialize the array of Foursquare search results asynchronously
     $.getJSON(SearchQueryURL, function(data){
     	var fsVenues = data.response.venues;
-        //console.log(fsVenues);
+        //console.log(fsVenues[7]);
+
+
+
     	fsVenues.forEach(function(venue) {
+// venue.imgURL = "https://ss1.4sqi.net/img/categories_v2/arts_entertainment/casino_bg_32-c71dcb59c6d6b2370cccbb2f4693e9a4.png"
+//     console.log(venue);
+
+// try
+// {
+
+     console.log(venue.name);
+     // console.log(venue.categories[0].icon.prefix);
+
+
+try
+{
+    if (venue.categories[0].icon) {
+        //console.log(venue.categories[0].icon.prefix);
+        imgPrefix = venue.categories[0].icon.prefix;
+        imgSuffix = venue.categories[0].icon.suffix;
+        imgSize = "32";
+        venue.imgURL = imgPrefix + imgSize + imgSuffix;
+    }
+}
+catch (error)
+{
+        venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
+}
 
     		ricksPlaces.push(venue);
     	});
@@ -276,7 +310,7 @@ function showSearchResults(ricksPlaces, searchForName) {
         var marker = new google.maps.Marker({
             position: {lat: positionLat, lng: positionLng},
             title: title,
-            id: i
+            id: i,
         });
 
         // Add the markers to the array begining after the custom markers
@@ -334,6 +368,7 @@ var AppViewModel = function(){
     this.searchForName = ko.observable("");
     this.filterBy = ko.observable("");
     this.ricksPlaces = ko.observableArray();
+    this.filterBy = ko.observable('');
 
     this.newSearch = function (searchForName){
     // clear the view model list
@@ -363,6 +398,26 @@ showInfo = function (){
     populateInfoWindow(this.marker, largeInfowindow);
 };
 
+//========================================================================
+//filter construction area
+// self.filtered = ko.computed(function(){
+//     var found = [];
+//     var caseFix = new RegExp(self.filterBy(), 'i');
+//     self.ricksPlaces().forEach(function(place){
+//         if (place.name.search(caseFix) !== -1) {
+//             found.push(place);
+//             place.marker.setVisible(true);
+//         } else {
+//             place.marker.setVisible(false);
+//             if (ricsPlaces.prototype.active === place) {
+//                 place.deactivate();
+//             }
+//         }
+// return found;
+//     });
+
+// });
+//========================================================================
 };
 
 AppViewModel.prototype.initMap = function(){
@@ -627,7 +682,9 @@ AppViewModel.prototype.initMap = function(){
         var position = locations[i].location;
         var title = locations[i].title;
         var content = locations[i].content;
-
+        // imgURL defined here for the local places data
+        var imgURL = locations[i].imgURL;
+    //var imgURL = "https://ss3.4sqi.net/img/categories_v2/building/school_32.png"
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker(
             {
@@ -637,7 +694,8 @@ AppViewModel.prototype.initMap = function(){
                 animation: google.maps.Animation.DROP,
                 icon: defaultIcon,
                 id: i,
-                name: title
+                name: title,
+                imgURL: imgURL
             });
 
         // Push the marker to our array of markers.
