@@ -2,7 +2,7 @@
 
 Welcome to my neighborhood!  Things are pretty quiet here in Midland, Texas, but have a look around and enjoy the sights (virtually) with this Neighborhood Map application.
 
-![Alt Text](https://github.com/RPMorganomous/map/blob/master/images/map.png)
+![Neighborhood Map](/images/map.png)
 
 The Neighborhood Map Udacity project is part of the Full Stack Developer Nanodegree which teaches students to:
 
