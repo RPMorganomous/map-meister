@@ -5,8 +5,10 @@
 // MODEL section - used to initialize and store locations data
 //============================================================
 
-// defined here for the Foursquare data
+// defined here for the Foursquare data - these are additional fields
+// required to account for the custom markers which are loaded first
 var imgURL;
+var filterID;
 
 // map is used to display location objects
 var map;
@@ -212,7 +214,7 @@ function showRicksHood() {
     for (var i = 0; i < markers.length; i++) {
 
         markers[i].setMap(map);
-
+        markers[i].setVisible(true);
         bounds.extend(markers[i].position);
     }
 
@@ -239,6 +241,8 @@ function pad(n){
 // matching the search term.
 function showSearchResults(ricksPlaces, searchForName) {
 
+//        this.filter() = "";
+
     // Format the date for the search query url
     var date = new Date().getFullYear().toString()
         + pad((new Date().getMonth() + 1).toString())
@@ -263,6 +267,7 @@ function showSearchResults(ricksPlaces, searchForName) {
     // Initialize the array of Foursquare search results asynchronously
     $.getJSON(SearchQueryURL, function(data){
     	var fsVenues = data.response.venues;
+        var i = locationsLength;
     	fsVenues.forEach(function(venue) {
 
         try
@@ -280,10 +285,14 @@ function showSearchResults(ricksPlaces, searchForName) {
                 venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
         }
 
+        venue.filterID = i
+        i++;
+
+
     		ricksPlaces.push(venue);
     	});
 
-    // Create new markers for each object
+    // Create new markers for each Foursquare object
     for (var i = 0; i < fsVenues.length; i++) {
         var positionLat = parseFloat(fsVenues[i].location.lat);
         var positionLng = parseFloat(fsVenues[i].location.lng);
@@ -301,7 +310,7 @@ function showSearchResults(ricksPlaces, searchForName) {
 
         // Add the markers to the markers array
         markers.push(marker);
-
+        markers[i].setVisible(true);
         // Assign new maps infowindows for the Foursquare marker objects
         largeInfowindow = new google.maps.InfoWindow();
 
@@ -365,33 +374,30 @@ var AppViewModel = function(){
 
         // convert contents of filter input field to lowercase
         var filterNocase = self.filter().toLowerCase();
-        //console.log("filterNocase = " + filterNocase);
-
-//console.log("markers = " + markers);
 
         // if no entry in filter input field, return all places
         if (!filterNocase) {
-            //console.log(self.ricksPlaces());
             return self.ricksPlaces();
         }
 
-
-
         // Check each item for the filter term
         self.ricksPlaces().forEach(function(venue) {
-//console.log("markers[] = " + markers[venue.id].id);
+
+//console.log("venue = " + venue.filterID);
+
             // if the term matches the venue, add the venue to the
             // matches array and show the marker
             if (venue.name.toLowerCase().indexOf(filterNocase) !== -1) {
                 matches.push(venue);
-                //markers[1].setVisible(true);
-                markers[venue.id].setVisible(true);
+
+        markers[venue.filterID].setVisible(true);
 
             // if no match, hide the marker
             } else {
-                markers[venue.id].setVisible(false);
+        markers[venue.filterID].setVisible(false);
 
                 // // If this marker's infowindow is open, close it
+                // // this code is not working :(
                 // if (largeInfowindow.active === venue) {
                 //     venue.deactivate();
                 // }
@@ -406,6 +412,7 @@ var AppViewModel = function(){
     this.newSearch = function (searchForName){
     // clear the view model list
         this.ricksPlaces([]);
+//        this.filter() = "";
 
     // Because no custom markers will be displayed after a search, reset
     // length of locations to begin populating the new array at item 0
@@ -710,6 +717,7 @@ AppViewModel.prototype.initMap = function(){
                 animation: google.maps.Animation.DROP,
                 icon: defaultIcon,
                 id: i,
+                filterID: i,
                 name: title,
                 imgURL: imgURL
             });

@@ -5,8 +5,10 @@
 // MODEL section - used to initialize and store locations data
 //============================================================
 
-// defined here for the Foursquare data
+// defined here for the Foursquare data - these are additional fields
+// required to account for the custom markers which are loaded first
 var imgURL;
+var filterID;
 
 // map is used to display location objects
 var map;
@@ -212,7 +214,7 @@ function showRicksHood() {
     for (var i = 0; i < markers.length; i++) {
 
         markers[i].setMap(map);
-
+        markers[i].setVisible(true);
         bounds.extend(markers[i].position);
     }
 
@@ -279,6 +281,10 @@ function showSearchResults(ricksPlaces, searchForName) {
         {
                 venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
         }
+
+        for (var i = 0, i < fsVenues.length; i++) {
+            venue.filterID = i + locationsLength;
+        };
 
     		ricksPlaces.push(venue);
     	});
