@@ -377,6 +377,11 @@ var AppViewModel = function(){
 
         // if no entry in filter input field, return all places
         if (!filterNocase) {
+            for (i = 0; i < self.ricksPlaces().length; i++) {
+                if (markers[i]) {
+                    markers[i].setVisible(true);
+                }
+            }
             return self.ricksPlaces();
         }
 
@@ -390,17 +395,16 @@ var AppViewModel = function(){
             if (venue.name.toLowerCase().indexOf(filterNocase) !== -1) {
                 matches.push(venue);
 
-        markers[venue.filterID].setVisible(true);
+                if (markers[venue.filterID]) {
+                    markers[venue.filterID].setVisible(true);
+                }
 
             // if no match, hide the marker
             } else {
-        markers[venue.filterID].setVisible(false);
-
-                // // If this marker's infowindow is open, close it
-                // // this code is not working :(
-                // if (largeInfowindow.active === venue) {
-                //     venue.deactivate();
-                // }
+                if (markers[venue.filterID]) {
+                    markers[venue.filterID].setVisible(false);
+                }
+        largeInfowindow.close();
             }
         });
         // return the list
