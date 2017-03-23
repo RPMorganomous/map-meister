@@ -6,7 +6,8 @@
 //============================================================
 
 // defined here for the Foursquare data
-var imgURL; // = "https://ss3.4sqi.net/img/categories_v2/building/school_32.png"
+var imgURL;
+
 // map is used to display location objects
 var map;
 
@@ -197,11 +198,6 @@ iwCloseBtn.mouseout(function(){
        streetViewService.getPanoramaByLocation(marker.position, radius,
             getStreetView);
 
-   // var iwOuter = $('.gm-style-iw');
-   // var iwBackground = iwOuter.prev();
-   //  iwBackground.children(':nth-child(2)').css({'display' : 'none'});
-   //  iwBackground.children(':nth-child(4)').css({'display' : 'none'});
-
        // Open the infowindow on the correct marker.
        infowindow.open(map, marker);
     }
@@ -267,35 +263,22 @@ function showSearchResults(ricksPlaces, searchForName) {
     // Initialize the array of Foursquare search results asynchronously
     $.getJSON(SearchQueryURL, function(data){
     	var fsVenues = data.response.venues;
-        //console.log(fsVenues[7]);
-
-
-
     	fsVenues.forEach(function(venue) {
-// venue.imgURL = "https://ss1.4sqi.net/img/categories_v2/arts_entertainment/casino_bg_32-c71dcb59c6d6b2370cccbb2f4693e9a4.png"
-//     console.log(venue);
 
-// try
-// {
-
-     console.log(venue.name);
-     // console.log(venue.categories[0].icon.prefix);
-
-
-try
-{
-    if (venue.categories[0].icon) {
-        //console.log(venue.categories[0].icon.prefix);
-        imgPrefix = venue.categories[0].icon.prefix;
-        imgSuffix = venue.categories[0].icon.suffix;
-        imgSize = "32";
-        venue.imgURL = imgPrefix + imgSize + imgSuffix;
-    }
-}
-catch (error)
-{
-        venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
-}
+        try
+        {
+            if (venue.categories[0].icon) {
+                //console.log(venue.categories[0].icon.prefix);
+                imgPrefix = venue.categories[0].icon.prefix;
+                imgSuffix = venue.categories[0].icon.suffix;
+                imgSize = "32";
+                venue.imgURL = imgPrefix + imgSize + imgSuffix;
+            }
+        }
+        catch (error)
+        {
+                venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
+        }
 
     		ricksPlaces.push(venue);
     	});
@@ -366,9 +349,54 @@ var AppViewModel = function(){
     var self = this;
 
     this.searchForName = ko.observable("");
-    this.filterBy = ko.observable("");
+    this.filter = ko.observable("");
     this.ricksPlaces = ko.observableArray();
-    this.filterBy = ko.observable('');
+//    this.filterBy = ko.observable('');
+
+//========================================================================
+//filter construction area
+
+    // Updates the list when filter is used.
+
+    this.filterResults = ko.computed(function() {
+        // every time an item is added to ricksPlaces, this search repeats
+        // so clear the matches array to keep only the final iteration
+        var matches = [];
+
+        // convert contents of filter input field to lowercase
+        var filterNocase = this.filter().toLowerCase();
+
+        // if no entry in filter input field, return all places
+        if (!filterNocase) {
+            return self.ricksPlaces;
+        }
+
+        // Check each item for the filter term
+        self.ricksPlaces().forEach(function(venue) {
+
+            // if the term matches the venue, add the venue to the
+            // matches array and show the marker
+            if (venue.name.toLowerCase().indexOf(filterNocase) !== -1) {
+                matches.push(venue);
+                markers.marker.setVisible(true);
+
+            // if no match, hid the marker
+            } else {
+                markers.marker.setVisible(false);
+
+                // If this marker's infowindow is open, close it
+                if (largeInfowindow.active === venue) {
+                    venue.deactivate();
+                }
+            }
+
+        });
+
+        // return the list
+        return matches;
+    });
+
+//========================================================================
 
     this.newSearch = function (searchForName){
     // clear the view model list
@@ -392,32 +420,15 @@ var AppViewModel = function(){
     showSearchResults(self.ricksPlaces, searchForName);
 };
 
+
+
 // Get the data for the infowindow
 showInfo = function (){
     largeInfowindow.close();
     populateInfoWindow(this.marker, largeInfowindow);
 };
 
-//========================================================================
-//filter construction area
-// self.filtered = ko.computed(function(){
-//     var found = [];
-//     var caseFix = new RegExp(self.filterBy(), 'i');
-//     self.ricksPlaces().forEach(function(place){
-//         if (place.name.search(caseFix) !== -1) {
-//             found.push(place);
-//             place.marker.setVisible(true);
-//         } else {
-//             place.marker.setVisible(false);
-//             if (ricsPlaces.prototype.active === place) {
-//                 place.deactivate();
-//             }
-//         }
-// return found;
-//     });
 
-// });
-//========================================================================
 };
 
 AppViewModel.prototype.initMap = function(){
@@ -721,7 +732,6 @@ AppViewModel.prototype.initMap = function(){
         // Used to offset the ricksPlaces array
         locationsLength = markers.length;
     }
-
 };
 
 // Instantiate a new ViewModel

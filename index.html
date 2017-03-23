@@ -29,13 +29,13 @@
           </button>
         </div>
         <div class="Center">
-          Filter By: <input data-bind="value: filterBy">
+          Filter By: <input data-bind="value: filter" placeholder="filter">
         </div>
         <hr>
         <div>
-<!--                       <table id="t01" style="width:100%" color="blue"> -->
-          <ul data-bind="foreach: ricksPlaces">
-<!--                                 <table id="t01" style="width:100%" color="blue"> -->
+
+          <ul data-bind="foreach: filterResults"> <!-- formerly ricksPlaces -->
+
             <li class="collection-item" data-bind= "click: showInfo">
 
               <table id="t01" style="width:100%" color="blue">
@@ -50,7 +50,7 @@
             </li>
             </table>
           </ul>
-<!--                       </table> -->
+
         </div>
       </div>
       <div id="map" ></div>
