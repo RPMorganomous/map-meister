@@ -26,7 +26,25 @@ The Neighborhood Map Udacity project is part of the Full Stack Developer Nanodeg
 
 This application utilizes a View - Model - ModelView design.  All components in the dom (view) are completely controlled by the ModelView, according to modern JavaScript design principles.
 
-With the [design spec](https://review.udacity.com/#!/rubrics/17/view) provided by [Udacity](https://www.udacity.com/) this project was built completely from scratch.  After achieving basic functionality, the project was expanded to include numerous features not required by the spec but still important for the overall user experience (detailed below).
+With the [design spec](https://review.udacity.com/#!/rubrics/17/view) provided by [Udacity](https://www.udacity.com/) this project was built completely from scratch.  After achieving basic functionality, the project was expanded to include numerous additional features not required by the spec but still important for the overall user experience:
+
+## Additional Features
+
+* **Custom Search**
+    - Search the neighborhood using any term you want!
+* **Custom Map Styles**
+    - In addition to the regular Google Map and Satellite styles, Neighborhood Map offers Desert and Midnight Map styles
+* **Custom Marker Set**
+    - There is a custom-build marker set showing 5 specific locations.  The markers are customized and portray traditional marker functionality.
+* **Foursquare Web Service API**
+    - The search function retrieves JSON data via AJAX creating a separate set of coresponding markers.
+* **Dual-Collection Filtering**
+    - When executing a filter, the results are culled from two seperate collections of places.  Both are managed by the ModelView so the list, markers, and infowindows operate appropriately.
+* **Custom Styled Infowindows**
+    - Infowindow styling is modern and sexy!
+    - When operating on mobile device, the panoramic views are fully responsive to device rotation.
+* **Search Results Icons**
+    - Icons provided by Foursquare are retrieved and aligned appropriately next to the listed place.
 
 ## Executing The Application
 
@@ -44,31 +62,32 @@ Open the application and select a location or place from the list on the left ha
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Google Chrome](https://www.google.com/chrome/)
+* [Sublime Text](https://www.sublimetext.com/)
+* Love & Patience ♥♥♥
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/RPMorganomous/contributing/blob/master/README.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/RPMorganomous/map-meister). 
 
-## Authors
+## Author
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Richard Morgan** - *Initial work* - [RPMorganomous](https://github.com/RPMorganomous)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see [LICENSE.md](https://opensource.org/licenses/MIT) for details
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
-
+* **Karol David** - *Guidance & Counseling* - Udacity Forum Mentor
+* **Sarah M** - *Guidance & Counseling* - Udacity Forum Mentor
+* **Google Maps Team - NY** - Training & Tutorials
+* **Adam Krogh** - "Midnight Commander" Snazzy Map styling
+* **Miguel Marnoto** - "5 Ways To Customize Google Maps Infowindow" Tutorial
+* **Richard Gieg** - *Inspiration* - Former Udacity Student
+* **Lei Zhu**- *Inspiration* - Former Udacity Student
