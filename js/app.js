@@ -270,6 +270,11 @@ function showSearchResults(ricksPlaces, searchForName) {
         var i = locationsLength;
     	fsVenues.forEach(function(venue) {
 
+//======================= ICONS ARE AWESOME =============================
+
+        // Foursquare json urls are in two pieces and need an image size
+        // added.  Also, json results do not always include an icon, so
+        // if there is no icon, a default icon is assigned.
         try
         {
             if (venue.categories[0].icon) {
@@ -282,14 +287,18 @@ function showSearchResults(ricksPlaces, searchForName) {
         }
         catch (error)
         {
-                venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
+                venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/" +
+                                "building/default_32.png"
         }
+//=========================================================================
 
+        // In order combine custom and Foursquare markers in the filter
+        // results, there must be a common field - filterID
         venue.filterID = i
         i++;
 
-
-    		ricksPlaces.push(venue);
+        // Add the venue to the array
+    	ricksPlaces.push(venue);
     	});
 
     // Create new markers for each Foursquare object
@@ -311,13 +320,13 @@ function showSearchResults(ricksPlaces, searchForName) {
         // Add the markers to the markers array
         markers.push(marker);
         markers[i].setVisible(true);
+
         // Assign new maps infowindows for the Foursquare marker objects
         largeInfowindow = new google.maps.InfoWindow();
 
         // Populate the infowindows upon marker click
         marker.addListener('click', function() {
             populateInfoWindow(this, largeInfowindow);
-
         });
 
         // Display the markers
@@ -331,11 +340,9 @@ function showSearchResults(ricksPlaces, searchForName) {
         alert("Foursquare data failed to load.  Error : " + error.status);
         showRicksHood();
     });
-
-
-
 }
 
+//============== COLORED MARKERS FOR CUSTOM PLACES ONLY ===============
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -351,6 +358,7 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Size(21,34));
         return markerImage;
 }
+//========================================================================
 
 // This function makes the locations observable by knockout.js (ko)
 var AppViewModel = function(){
@@ -360,14 +368,13 @@ var AppViewModel = function(){
     this.searchForName = ko.observable("");
     this.filter = ko.observable("");
     this.ricksPlaces = ko.observableArray();
-//    this.filterBy = ko.observable('');
 
-//========================================================================
-//filter construction area
+//=/=/=/=/=/=/ FILTER CONSTRUCTION ZONE - HARD HAD REQUIRED =/=/=/=/=/=/=/=
 
     // Updates the list when filter is used.
 
     this.filterResults = ko.computed(function() {
+
         // every time an item is added to ricksPlaces, this search repeats
         // so clear the matches array to keep only the final iteration
         var matches = [];
@@ -378,75 +385,84 @@ var AppViewModel = function(){
         // if no entry in filter input field, return all places
         if (!filterNocase) {
             for (i = 0; i < self.ricksPlaces().length; i++) {
+
+                // check for marker first, then update
                 if (markers[i]) {
                     markers[i].setVisible(true);
                 }
             }
+
+            // send the original list to FilterResults
             return self.ricksPlaces();
         }
 
         // Check each item for the filter term
         self.ricksPlaces().forEach(function(venue) {
 
-//console.log("venue = " + venue.filterID);
-
             // if the term matches the venue, add the venue to the
             // matches array and show the marker
             if (venue.name.toLowerCase().indexOf(filterNocase) !== -1) {
                 matches.push(venue);
 
+                // check for marker first, then update
                 if (markers[venue.filterID]) {
                     markers[venue.filterID].setVisible(true);
                 }
 
             // if no match, hide the marker
             } else {
+                // check for marker first, then update
                 if (markers[venue.filterID]) {
                     markers[venue.filterID].setVisible(false);
                 }
+        // if there is a marker window open, close it
         largeInfowindow.close();
             }
         });
-        // return the list
+
+        // return the list of matching places
         return matches;
     });
 
-//========================================================================
+//=/=/=/=/=/=/=/=/ END OF FILTER CONSTRUCTION ZONE =/=/=/=/=/=/=/=/=/=/=
 
+    // runs whenever the KO Search button is clicked
     this.newSearch = function (searchForName){
+
     // clear the view model list
         this.ricksPlaces([]);
-//        this.filter() = "";
 
-    // Because no custom markers will be displayed after a search, reset
-    // length of locations to begin populating the new array at item 0
-    locationsLength = 0;
+        // This actually does nothing, but it looks important doesn't it :)
+        // Wouldn't it be great if it were this easy to force knockout.js
+        // computed variables to refresh.
+        self.filter.valueHasMutated();
 
-    // Remove any existing markers
-    if (markers.length > 0) {
-        for (i=0; i < markers.length; i++) {
-                 markers[i].setMap(null);
+        // Because no custom markers will be displayed after a search, reset
+        // length of locations to begin populating the new array at item 0
+        locationsLength = 0;
+
+        // Remove any existing markers
+        if (markers.length > 0) {
+            for (i=0; i < markers.length; i++) {
+                     markers[i].setMap(null);
+            }
+
+            // Empty the markers array
+            markers = [];
         }
 
-    // Empty the markers array
-    markers = [];
-    }
+        // Execute the new Foursquare search
+        showSearchResults(self.ricksPlaces, searchForName);
+    };
 
-    // Execute the new Foursquare search
-    showSearchResults(self.ricksPlaces, searchForName);
+    // Get the data for the infowindow
+    showInfo = function (){
+        //largeInfowindow.close(); - don't need this here anymore but might later
+        populateInfoWindow(this.marker, largeInfowindow);
+    };
 };
 
-
-
-// Get the data for the infowindow
-showInfo = function (){
-    largeInfowindow.close();
-    populateInfoWindow(this.marker, largeInfowindow);
-};
-
-
-};
-
+// added to the ViewModel by prototype for handling custom markers
 AppViewModel.prototype.initMap = function(){
 
     // Create a couple of styles arrays to use with the map.
@@ -711,7 +727,7 @@ AppViewModel.prototype.initMap = function(){
         var content = locations[i].content;
         // imgURL defined here for the local places data
         var imgURL = locations[i].imgURL;
-    //var imgURL = "https://ss3.4sqi.net/img/categories_v2/building/school_32.png"
+
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker(
             {
