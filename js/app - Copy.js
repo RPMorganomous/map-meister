@@ -5,6 +5,9 @@
 // MODEL section - used to initialize and store locations data
 //============================================================
 
+// defined here for the Foursquare data
+var imgURL;
+
 // map is used to display location objects
 var map;
 
@@ -26,27 +29,32 @@ var locations =
         {
             title: 'Ricks House',
             location: {lat: 32.010396, lng: -102.107679},
-            content: 'Rick has a nice house.'
+            content: 'Rick has a nice house.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/arts_entertainment/arcade_32.png'
         },
         {
             title: 'Fasken Park',
             location: {lat: 32.012297, lng: -102.106606},
-            content: 'Faskin Park is a nice place for a picnic.'
+            content: 'Faskin Park is a nice place for a picnic.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/park_32.png'
         },
         {
             title: 'Midland College',
             location: {lat: 32.030844, lng: -102.106315},
-            content: 'Rick went to school here.'
+            content: 'Rick went to school here.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/education/other_32.png'
         },
         {
             title: 'Dojo',
             location: {lat: 31.998896, lng: -102.1163},
-            content: 'This is where we study mixed martial arts.'
+            content: 'This is where we study mixed martial arts.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/shops/gym_martialarts_32.png'
         },
         {
             title: 'Dog Park',
             location: {lat: 32.036648, lng: -102.072355},
-            content: 'A great place to play frisbee with pets.'
+            content: 'A great place to play frisbee with pets.',
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/dogrun_32.png'
         },
     ];
 
@@ -114,7 +122,8 @@ function populateInfoWindow(marker, infowindow) {
                     '</div><div id="pano"></div>');
 
 //===================================================================
-// customizing the infowindow
+// customizing the infowindow based on a great tutorial by
+// Miguel Marnoto, "5 ways to customize Google Maps InfoWindow"
 /*
  * The google.maps.event.addListener() event waits for
  * the creation of the infowindow HTML structure 'domready'
@@ -138,8 +147,29 @@ iwBackground.children(':nth-child(2)').css({'display' : 'none'});
    // Remove the white background DIV
 iwBackground.children(':nth-child(4)').css({'display' : 'none'});
 
+// Taking advantage of the already established reference to
+// div .gm-style-iw with iwOuter variable.
+// You must set a new variable iwCloseBtn.
+// Using the .next() method of JQuery you reference the following div to .gm-style-iw.
+// Is this div that groups the close button elements.
+var iwCloseBtn = iwOuter.next();
+
+// Apply the desired effect to the close button
+iwCloseBtn.css({
+  opacity: '1', // by default the close button has an opacity of 0.7
+  //right: '38px', top: '3px', // button repositioning - visually only
+  border: '7px solid #48b5e9', // increasing button border and new color
+  'border-radius': '13px', // circular effect
+  'box-shadow': '0 0 5px #3990B9' // 3D effect to highlight the button
+  });
+
+// The API automatically applies 0.7 opacity to the button after the mouseout event.
+// This function reverses this event to the desired value.
+iwCloseBtn.mouseout(function(){
+  $(this).css({opacity: '1'});
 });
 
+});
 //===================================================================
 
 
@@ -167,11 +197,6 @@ iwBackground.children(':nth-child(4)').css({'display' : 'none'});
        // markers position
        streetViewService.getPanoramaByLocation(marker.position, radius,
             getStreetView);
-
-   // var iwOuter = $('.gm-style-iw');
-   // var iwBackground = iwOuter.prev();
-   //  iwBackground.children(':nth-child(2)').css({'display' : 'none'});
-   //  iwBackground.children(':nth-child(4)').css({'display' : 'none'});
 
        // Open the infowindow on the correct marker.
        infowindow.open(map, marker);
@@ -238,8 +263,22 @@ function showSearchResults(ricksPlaces, searchForName) {
     // Initialize the array of Foursquare search results asynchronously
     $.getJSON(SearchQueryURL, function(data){
     	var fsVenues = data.response.venues;
-
     	fsVenues.forEach(function(venue) {
+
+        try
+        {
+            if (venue.categories[0].icon) {
+                //console.log(venue.categories[0].icon.prefix);
+                imgPrefix = venue.categories[0].icon.prefix;
+                imgSuffix = venue.categories[0].icon.suffix;
+                imgSize = "32";
+                venue.imgURL = imgPrefix + imgSize + imgSuffix;
+            }
+        }
+        catch (error)
+        {
+                venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/building/default_32.png"
+        }
 
     		ricksPlaces.push(venue);
     	});
@@ -254,7 +293,7 @@ function showSearchResults(ricksPlaces, searchForName) {
         var marker = new google.maps.Marker({
             position: {lat: positionLat, lng: positionLng},
             title: title,
-            id: i
+            id: i,
         });
 
         // Add the markers to the array begining after the custom markers
@@ -310,12 +349,57 @@ var AppViewModel = function(){
     var self = this;
 
     this.searchForName = ko.observable("");
+    this.filter = ko.observable("");
     this.ricksPlaces = ko.observableArray();
+//    this.filterBy = ko.observable('');
 
+//========================================================================
+//filter construction area
 
-this.newSearch = function (searchForName){
+    // Updates the list when filter is used.
+
+    this.filterResults = ko.computed(function() {
+        // every time an item is added to ricksPlaces, this search repeats
+        // so clear the matches array to keep only the final iteration
+        var matches = [];
+
+        // convert contents of filter input field to lowercase
+        var filterNocase = self.filter().toLowerCase();
+        console.log("filterNocase = " + filterNocase);
+
+        // if no entry in filter input field, return all places
+        if (!filterNocase) {
+            return self.ricksPlaces();
+        }
+
+        // Check each item for the filter term
+        self.ricksPlaces().forEach(function(venue) {
+
+            // if the term matches the venue, add the venue to the
+            // matches array and show the marker
+            if (venue.name.toLowerCase().indexOf(filterNocase) !== -1) {
+                matches.push(venue);
+                markers.marker.setVisible(true);
+
+            // if no match, hide the marker
+            } else {
+                markers.marker.setVisible(false);
+
+                // If this marker's infowindow is open, close it
+                if (largeInfowindow.active === venue) {
+                    venue.deactivate();
+                }
+            }
+        });
+        // return the list
+        return matches;
+    });
+
+//========================================================================
+
+    this.newSearch = function (searchForName){
     // clear the view model list
-    this.ricksPlaces([]);
+        this.ricksPlaces([]);
 
     // Because no custom markers will be displayed after a search, reset
     // length of locations to begin populating the new array at item 0
@@ -335,11 +419,14 @@ this.newSearch = function (searchForName){
     showSearchResults(self.ricksPlaces, searchForName);
 };
 
+
+
 // Get the data for the infowindow
 showInfo = function (){
     largeInfowindow.close();
     populateInfoWindow(this.marker, largeInfowindow);
 };
+
 
 };
 
@@ -592,7 +679,7 @@ AppViewModel.prototype.initMap = function(){
     var highlightedIcon = makeMarkerIcon('FFFF24');
 
     // Set the new maps infowindow
-    var largeInfowindow = new google.maps.InfoWindow();
+    this.largeInfowindow = new google.maps.InfoWindow();
 
     // Set the new maps boundry
     var bounds = new google.maps.LatLngBounds();
@@ -605,7 +692,9 @@ AppViewModel.prototype.initMap = function(){
         var position = locations[i].location;
         var title = locations[i].title;
         var content = locations[i].content;
-
+        // imgURL defined here for the local places data
+        var imgURL = locations[i].imgURL;
+    //var imgURL = "https://ss3.4sqi.net/img/categories_v2/building/school_32.png"
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker(
             {
@@ -615,7 +704,8 @@ AppViewModel.prototype.initMap = function(){
                 animation: google.maps.Animation.DROP,
                 icon: defaultIcon,
                 id: i,
-                name: title
+                name: title,
+                imgURL: imgURL
             });
 
         // Push the marker to our array of markers.
@@ -641,7 +731,6 @@ AppViewModel.prototype.initMap = function(){
         // Used to offset the ricksPlaces array
         locationsLength = markers.length;
     }
-
 };
 
 // Instantiate a new ViewModel
