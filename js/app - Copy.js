@@ -321,18 +321,6 @@ function showSearchResults(ricksPlaces, searchForName) {
         markers.push(marker);
         markers[i].setVisible(true);
 
-        if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
-
-            } else {
-
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-            // Stop bounce after 3000 milliseconds = 4 bounces
-            setTimeout(function(){
-                marker.setAnimation(null);
-            }, 3000);
-        }
-
         // Assign new maps infowindows for the Foursquare marker objects
         largeInfowindow = new google.maps.InfoWindow();
 
