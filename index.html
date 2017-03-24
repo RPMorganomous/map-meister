@@ -10,8 +10,8 @@
 </head>
 <body>
     <div id="wrapper">
-      <div id="sidebar-wrapper">
-        <h3 style="color:#48b5e9" >Rick's Neighborhood</h3>
+      <div id="sidebar-wrapper" class="sidebar-brand">
+        <h3 style="color:#48b5e9; text-align: center" >Rick's Neighborhood</h3>
 
         <hr>
         <li style="color:#48b5e9; list-style: none">
@@ -20,6 +20,7 @@
           <button style="color:black" data-bind="click: newSearch(searchForName)">GO
           </button>
         </li>
+        <hr>
         <li style="color:#48b5e9; list-style: none">
           Filter:
           <input size="20" data-bind="textInput: filter" placeholder="Filter Results Here">
@@ -42,11 +43,15 @@
         </ul>
       </div>
     </div>
-          <!-- <div id="map"> </div> only works outside Page Content -->
+          <div id="map"> </div>
         <!-- Page Content -->
         <div id="page-content-wrapper">
-          <div id="map"> </div>
-            <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+                    <div class="container-fluid">
+          <!-- <div id="map"> </div> -->
+                <div style="float: right">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle" >Show Menu</a>
+                </div>
+                    </div>
           </div>
         </div>
 
