@@ -125,7 +125,9 @@ function populateInfoWindow(marker, infowindow) {
 
 //===================================================================
 // customizing the infowindow based on a great tutorial by
-// Miguel Marnoto, "5 ways to customize Google Maps InfoWindow"
+// Miguel Marnoto, "5 ways to customize Google Maps InfoWindow."
+// Also found on stackoverflow here:
+// http://stackoverflow.com/questions/5634991/styling-google-maps-infowindow
 /*
  * The google.maps.event.addListener() event waits for
  * the creation of the infowindow HTML structure 'domready'
