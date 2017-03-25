@@ -32,31 +32,41 @@ var locations =
             title: 'Ricks House',
             location: {lat: 32.010396, lng: -102.107679},
             content: 'Rick has a nice house.',
-            imgURL: 'https://ss3.4sqi.net/img/categories_v2/arts_entertainment/arcade_32.png'
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/arts_entertainment/arcade_32.png',
+            rating: '✨✨✨✨✨',
+            phone: '(432) 664-5266'
         },
         {
             title: 'Fasken Park',
             location: {lat: 32.012297, lng: -102.106606},
             content: 'Faskin Park is a nice place for a picnic.',
-            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/park_32.png'
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/park_32.png',
+            rating: '✨✨✨✨✨',
+            phone: 'unavailable'
         },
         {
             title: 'Midland College',
             location: {lat: 32.030844, lng: -102.106315},
             content: 'Rick went to school here.',
-            imgURL: 'https://ss3.4sqi.net/img/categories_v2/education/other_32.png'
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/education/other_32.png',
+            rating: '✨✨✨✨✨',
+            phone: '(432) 685-4500'
         },
         {
-            title: 'Dojo',
+            title: 'Matthew\'s Martial Arts',
             location: {lat: 31.998896, lng: -102.1163},
             content: 'This is where we study mixed martial arts.',
-            imgURL: 'https://ss3.4sqi.net/img/categories_v2/shops/gym_martialarts_32.png'
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/shops/gym_martialarts_32.png',
+            rating: '✨✨✨✨✨',
+            phone: '(432) 488-7467'
         },
         {
             title: 'Dog Park',
             location: {lat: 32.036648, lng: -102.072355},
             content: 'A great place to play frisbee with pets.',
-            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/dogrun_32.png'
+            imgURL: 'https://ss3.4sqi.net/img/categories_v2/parks_outdoors/dogrun_32.png',
+            rating: '✨✨✨✨✨',
+            phone: 'Phones for dogs?!'
         },
     ];
 
@@ -68,6 +78,12 @@ var locations =
 function loadError(source) {
     alert(source + ' could not be initialized.');
 }
+
+// Simple-sidebar toggle button control
+$("#menu-toggle").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+});
 
 // This function populates the infowindow when the custom marker is clicked.
 // It only allows one infowindow which will open at the marker that is clicked,
@@ -90,16 +106,17 @@ function populateInfoWindow(marker, infowindow) {
         });
 
         // Make the markers bounce when selected
+
         if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
 
             } else {
 
             marker.setAnimation(google.maps.Animation.BOUNCE);
-            // Stop bounce after 3000 milliseconds = 4 bounces
+            // Stop bounce after 2850 milliseconds = 4 bounces
             setTimeout(function(){
                 marker.setAnimation(null);
-            }, 3000);
+            }, 2850);
         }
 
         // initialize a new google street view service with a radius
@@ -120,7 +137,7 @@ function populateInfoWindow(marker, infowindow) {
                     nearStreetViewLocation, marker.position);
 
                 infowindow.setContent('<div id="iw-title">' +
-                    marker.title +
+                    marker.title + " " + marker.rating + " " + marker.phone +
                     '</div><div id="pano"></div>');
 
 //===================================================================
@@ -248,7 +265,7 @@ function showSearchResults(ricksPlaces, searchForName) {
     // Format the date for the search query url
     var date = new Date().getFullYear().toString()
         + pad((new Date().getMonth() + 1).toString())
-        + new Date().getDate().toString();
+        + pad(new Date().getDate().toString());
 
     // Build the search query url
     var SearchQueryURL = "https://api.foursquare.com/v2/venues/search?" +
@@ -280,7 +297,6 @@ function showSearchResults(ricksPlaces, searchForName) {
         try
         {
             if (venue.categories[0].icon) {
-                //console.log(venue.categories[0].icon.prefix);
                 imgPrefix = venue.categories[0].icon.prefix;
                 imgSuffix = venue.categories[0].icon.suffix;
                 imgSize = "32";
@@ -310,10 +326,26 @@ function showSearchResults(ricksPlaces, searchForName) {
 
         var title = fsVenues[i].name;
 
+        // Foursquare no longer returning ratings with standard api,
+        // but keeping this placeholder for future reference seems prudent
+        var rating = '';
+
+        // Foursquare json always includes formattedPhone, but it does not
+        // always have a value
+        var phone = fsVenues[i].contact.formattedPhone;
+
+        if (phone){
+        } else {
+            phone = 'unavailable';
+        }
+
         var marker = new google.maps.Marker({
             position: {lat: positionLat, lng: positionLng},
             title: title,
+            animation: google.maps.Animation.DROP,
             id: i,
+            rating: rating,
+            phone: '<p> Phone: ' + phone + '<p>',
         });
 
         // Add the markers to the array begining after the custom markers
@@ -732,15 +764,18 @@ AppViewModel.prototype.initMap = function(){
     var bounds = new google.maps.LatLngBounds();
 
     // The following group uses the location array to create
-    // an array of markers on initialize.
+    // an array of markers on initialize.  Markers are also used
+    // for infowindow population
     for (var i = 0; i < locations.length; i++) {
 
-    // Get the position from the location array.
+    // Get the position from the location array (custom locations).
         var position = locations[i].location;
         var title = locations[i].title;
         var content = locations[i].content;
         // imgURL defined here for the local places data
         var imgURL = locations[i].imgURL;
+        var rating = locations[i].rating;
+        var phone = locations[i].phone;
 
     // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker(
@@ -753,7 +788,9 @@ AppViewModel.prototype.initMap = function(){
                 id: i,
                 filterID: i,
                 name: title,
-                imgURL: imgURL
+                imgURL: imgURL,
+                rating: rating,
+                phone: '<p> Phone: ' + phone + '<p>'
             });
 
         // Push the marker to our array of markers.

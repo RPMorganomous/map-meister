@@ -6,16 +6,17 @@
         padding: 0;
       }
 
+/*Customize the container here: */
+
       .container {
         /*height: 100%;*/
         /*position: relative;*/
         /*background-color: black;*/
-
       }
 
-.container-fluid {
-     padding:0;
-}
+      .container-fluid {
+        padding:0;
+      }
 
       .options-box {
         background: black;
@@ -28,10 +29,10 @@
         width: 340px;
         overflow-y: auto;
         color: #48b5e9;
-/*        padding-right: 0;
-     padding-left: 0;*/
-/*     margin-right: auto;
-     margin-left: auto;*/
+/*      padding-right: 0;
+        padding-left: 0;*/
+/*      margin-right: auto;
+        margin-left: auto;*/
       }
 
       input {
@@ -43,6 +44,20 @@
         font-size: 22px;
         margin: 0 0 10px 0;
         text-align: center;
+      }
+
+      #menu-heading {
+        color: #48b5e9;
+        text-align: center;
+      }
+
+      #menu-li1 {
+        color: #48b5e9;
+        list-style: none;
+      }
+
+      #button-GO {
+        color: black;
       }
 
       #hide-ricksHood,
@@ -59,47 +74,43 @@
         height: 50px;
         font-size: 20px;
         line-height: 1;
-        /*line-height: 40px;*/
         list-style-type: none;
         padding-left: 0;
         margin-left: 0;
-/*        align-items: right;*/
         vertical-align: middle;
       }
 
       #t01{
         color: #48b5e9;
-/*        align-content: right;*/
+        width: 100%;
       }
 
-/*table#t01 tr:nth-child(even) {
-    background-color: blue;
-}
-table#t01 tr:nth-child(odd) {
-    background-color: grey;
-}*/
-/*table#t01 tr {
-    color: blue;
-    background-color: black;
-}*/
 
-/*      .collection-item:after {
+/* Keeping this data for future reference */
+
+      /*table#t01 tr:nth-child(even) {
+          background-color: blue;
+      }
+      table#t01 tr:nth-child(odd) {
+          background-color: grey;
+      }*/
+      /*table#t01 tr {
+          color: blue;
+          background-color: black;
+      }*/
+
+      /*.collection-item:after {
       content: url('https://ss3.4sqi.net/img/categories_v2/building/school_32.png');
       vertical-align: -20%;
       }*/
 
       #map {
-        /*bottom:0px;*/
         height: 100%;
             width: 100%;
             float: left;
-        /*left: 250px;*/
         position: absolute;
-        /*right: 0px;*/
         /*overflow: hidden;*/
       }
-
-
 
       #iw-container .iw-title {
          font-family: 'Open Sans Condensed', sans-serif;
@@ -134,22 +145,10 @@ table#t01 tr:nth-child(odd) {
          /*height: 200px !important;*/
       }
 
-/*.gm-style-iw + div {
-    left: 12px !important;
-    right: unset !important;
- }*/
-
-/*.gm-style-iw {
-  background-color: rgb(237, 28, 36);
-    border: 1px solid rgba(72, 181, 233, 0.6);
-    border-radius: 10px;
-    box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
-    color: rgb(255, 255, 255) !important;
-    font-family: gothambook;
-    text-align: center;
-    top: 15px !important;
-    width: 150px !important;
-}*/
+      /*.gm-style-iw + div {
+          left: 12px !important;
+          right: unset !important;
+       }*/
 
       #pano { /* inside the blue box */
         width: 260px;
@@ -165,6 +164,6 @@ table#t01 tr:nth-child(odd) {
       .Center {
         display: flex;
         align-items: center;
-        justify-content: left;
+        justify-content: flex-start;
         }
 
