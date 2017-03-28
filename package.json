@@ -1,0 +1,35 @@
+{
+  "name": "map-meister",
+  "version": "1.0.0",
+  "description": "Neighborhood Map project",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "gulp-csslint": "^1.0.0",
+    "gulp-html5-lint": "^1.1.0",
+    "gulp-jshint": "^2.0.4",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.1.2",
+    "jshint": "^2.9.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RPMorganomous/map-meister.git"
+  },
+  "keywords": [
+    "map"
+  ],
+  "author": "Richard Morgan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RPMorganomous/map-meister/issues"
+  },
+  "homepage": "https://github.com/RPMorganomous/map-meister#readme"
+}

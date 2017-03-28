@@ -29,7 +29,7 @@ var secret = "B4MK0Z5OWO1CSIIE5WEJCJHILJ13LJIKS5H20PHZTBLR44S5";
 var locations =
     [
         {
-            title: 'Ricks House',
+            title: 'Ricks Home',
             location: {lat: 32.010396, lng: -102.107679},
             content: 'Rick has a nice house.',
             imgURL: 'https://ss3.4sqi.net/img/categories_v2/arts_entertainment/arcade_32.png',
@@ -306,13 +306,13 @@ function showSearchResults(ricksPlaces, searchForName) {
         catch (error)
         {
                 venue.imgURL = "https://ss3.4sqi.net/img/categories_v2/" +
-                                "building/default_32.png"
+                                "building/default_32.png";
         }
 //=========================================================================
 
         // In order combine custom and Foursquare markers in the filter
         // results, there must be a common field - filterID
-        venue.filterID = i
+        venue.filterID = i;
         i++;
 
         // Add the venue to the array
@@ -320,7 +320,7 @@ function showSearchResults(ricksPlaces, searchForName) {
     	});
 
     // Create new markers for each Foursquare object
-    for (var i = 0; i < fsVenues.length; i++) {
+    for (i = 0; i < fsVenues.length; i++) {
         var positionLat = parseFloat(fsVenues[i].location.lat);
         var positionLng = parseFloat(fsVenues[i].location.lng);
 
