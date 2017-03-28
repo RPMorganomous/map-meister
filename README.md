@@ -21,6 +21,10 @@ The Neighborhood Map Udacity project is part of the Full Stack Developer Nanodeg
 * JSON
 * Google Maps API
 * Foursquare API
+* bootstrap.js
+* Node.js
+* npm
+* gulp minification and linting
 
 ## Methodology
 
